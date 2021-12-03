@@ -56,5 +56,7 @@ export default {
     text-align: center;
     margin-top: 10px;
   }
-  
+  .modal-header{
+    background: #8ba9d6;
+  }
 </style>

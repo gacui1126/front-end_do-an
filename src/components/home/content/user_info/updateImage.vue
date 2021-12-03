@@ -1,7 +1,7 @@
 <template>
   <div class="update_image">
     <div class="modal fade" id="updateImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-side modal-bottom-right modal-notify modal-info" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Thay đổi hình đại diện</h5>
@@ -90,5 +90,8 @@ export default {
     border: seagreen solid 1px;
     border-radius: 10px;
     box-shadow: 10px 10px 5px #aaaaaa;
+  }
+  .modal-header{
+    background: #d6b88b;
   }
 </style>

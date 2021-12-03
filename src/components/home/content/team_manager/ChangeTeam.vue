@@ -17,7 +17,7 @@
                 <label>Team muốn đổi</label>
                     <select class="form-select" v-model="team.name">
                       <option value="" disabled selected>Chọn team</option>
-                      <option v-for="(data,index) in teamManager.data" :key="index"> {{data.name}}</option>
+                      <option v-for="(data,index) in teamManager.getAllTeam" :key="index"> {{data.name}}</option>
                     </select>
               </div>
               <div class="btn_team">
@@ -59,5 +59,7 @@ export default {
   .btn_team{
     text-align: center;
   }
-  
+  .modal-header{
+    background: #8bc7d6;
+  }
 </style>

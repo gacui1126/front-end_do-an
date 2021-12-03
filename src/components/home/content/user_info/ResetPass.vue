@@ -70,4 +70,7 @@ export default {
   .button{
     text-align: center;
   }
+  .modal-header{
+    background: #d6c58b;
+  }
 </style>

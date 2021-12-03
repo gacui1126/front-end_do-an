@@ -37,7 +37,7 @@
                   <div class="col">
                     <select class="form-select" v-model="input.team">
                       <option value="" disabled selected>Team</option>
-                       <option v-for="(data,index) in teamManager.data" :key="index"> {{data.name}}</option>
+                       <option v-for="(data,index) in teamManager.getAllTeam" :key="index"> {{data.name}}</option>
                     </select>
                   </div>
                   <div class="col">
@@ -135,5 +135,7 @@ export default {
     padding: 10px 20px 10px 0;
     text-align: right;
   }
-  
+  .modal-header{
+    background: #8bd695;
+  }
 </style>

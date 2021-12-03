@@ -43,5 +43,7 @@ export default {
   .btn-up{
     text-align: center;
   }
-  
+  .modal-header{
+    background: #d6ad8b;
+  }
 </style>

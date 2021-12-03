@@ -52,5 +52,7 @@ export default {
   .btn_team{
     text-align: center;
   }
-  
+  .modal-header{
+    background: #908bd6;
+  }
 </style>

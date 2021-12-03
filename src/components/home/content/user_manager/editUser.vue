@@ -26,8 +26,8 @@
               <div class="form-group">
                 <label>Team</label>
                 <select class="custom-select" v-model="createUser.teamName">
-                    <!-- <option value="" disabled selected>Chọn team</option> -->
-                    <option v-for="(data,index) in teamManager.data" :key="index"> {{data.name}}</option>
+                    <!-- <option value="0" disabled selected>Chọn team</option> -->
+                    <option v-for="(data,index) in teamManager.getAllTeam" :key="index"> {{data.name}}</option>
                 </select>
               </div>
               <div class="form-group">
@@ -66,6 +66,7 @@ export default {
   },
   mounted(){
     this.showUser()
+    this.showTeam()
   },
   methods:{
     showUser(){
@@ -73,6 +74,9 @@ export default {
     },
     update(id){
       this.$store.dispatch('updateUser',id)
+    },
+    showTeam(){
+      this.$store.dispatch('getAllTeam');
     }
   }
 }
@@ -82,5 +86,7 @@ export default {
   .btn-up{
     text-align: center;
   }
-  
+  .modal-header{
+    background: #8ba9d6;
+  }
 </style>

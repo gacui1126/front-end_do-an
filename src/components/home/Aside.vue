@@ -12,8 +12,8 @@
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="dist/img/user.jpeg" class="img-circle elevation-2" alt="User Image">
+        <div class="avatar">
+          <img :src="path + auth.user.img" alt="avt" class="rounded-circle" width="150" height="150" >
         </div>
         <div class="info">
           <router-link to="info" class="d-block link-none">{{auth.user.name}}</router-link>
@@ -77,12 +77,40 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <router-link class="nav-link" to="team-manager">
-                  <i class="fas fa-tasks nav-icon"></i>
-                  <p>Dự án</p>
+                <router-link class="nav-link" to="all-project">
+                  <i class="fas fa-project-diagram nav-icon"></i>
+                  <p>Tất cả dự án</p>
                 </router-link>
               </li>
-              
+              <li class="nav-item">
+                <router-link class="nav-link" to="my-project">
+                  <i class="fas fa-tasks nav-icon"></i>
+                  <p>Dự án của tôi</p>
+                </router-link>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item menu-open">
+            <a href="#" class="nav-link active br-y">
+              <i class="fas fa-cogs nav-icon"></i>
+              <p>
+                  Cấu hình
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link class="nav-link" to="all-project">
+                  <i class="fas fa-project-diagram nav-icon"></i>
+                  <p>Vai trò</p>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="my-project">
+                  <i class="fas fa-tasks nav-icon"></i>
+                  <p>Phân quyền</p>
+                </router-link>
+              </li>
             </ul>
           </li>
         </ul>
@@ -98,6 +126,12 @@
 import { mapState } from "vuex";
 
 export default {
+  data(){
+    return{
+        path: 'http://localhost:8080/storage/images/'
+    }
+  },
+  
   computed:{
     ...mapState(['auth'])
   }
@@ -111,5 +145,13 @@ export default {
   .logo{
     display: flex;
     justify-content: center;
+  }
+  .user-panel img{
+    height: 2.1rem;
+    width: 2.1rem;
+    object-fit: cover;
+  }
+  .br-y{
+    background: rgb(118, 136, 100);
   }
 </style>

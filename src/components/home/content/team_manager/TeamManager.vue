@@ -65,6 +65,7 @@ export default {
   components:{ CreateTeam, EditTeam, TeamUser },
   created(){
     this.showTeam()
+    this.getAllTeam()
   },
   methods:{
     showTeam(page = 1){
@@ -78,6 +79,9 @@ export default {
     },
     teamUser(id){
       this.$store.dispatch('teamUser', id);
+    },
+    getAllTeam(){
+      this.$store.dispatch('getAllTeam')
     }
   }
 }

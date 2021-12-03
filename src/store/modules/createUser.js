@@ -52,7 +52,7 @@ const actions = {
     .then(response => {
       commit('getUser',response.data.data)
       commit('pageInfo',response.data)
-      // console.log(response)
+      // console.log(response.data.data)
     })
   },
   async editUser({commit}, id){
@@ -66,7 +66,7 @@ const actions = {
       });
       let data = res.data;
       if(data){
-        // console.log(data.data)
+        // console.log(id)
         commit('edit',data.data);
         commit('teamName',data.data.teams.name)
       }

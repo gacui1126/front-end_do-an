@@ -148,10 +148,13 @@ import { mapState } from 'vuex'
 import editInfo from './editInfo.vue'
 import ResetPass from './ResetPass.vue'
 import UpdateImage from './updateImage.vue'
+
 export default {
   data() {
     return{
-      path: 'http://localhost:8080/storage/images/'
+      path: 'http://localhost:8080/storage/images/',
+      modal1: false,
+      data:[]
     }
   },
   components: { editInfo, UpdateImage, ResetPass },
@@ -167,7 +170,7 @@ export default {
     },
     editInfo(id){
       this.$store.dispatch('editInfo', id)
-    }
+    },
   }
 }
 </script>

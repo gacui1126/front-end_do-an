@@ -1,7 +1,6 @@
 import axios from 'axios';
-// import isShow from './isShow';
 const state = {
-  data: {},
+  data: [],
   team: {},
   message : '',
   editData: [],
@@ -13,6 +12,7 @@ const state = {
   idUser: '',
   total: 4,
   pageInfo: null,
+  getAllTeam: []
 }
 const getters = {
   data: state => state.data
@@ -24,6 +24,13 @@ const actions = {
       { 
         commit('setTeam', response.data.data)
         commit('pageInfo',response.data)
+      })
+  },
+  async getAllTeam({commit}){
+    await axios.get('/api/team/get-all-team')
+    .then(response =>
+      { 
+        commit('getAllTeam', response.data.data)
       })
   },
   async create({commit},team){
@@ -38,7 +45,8 @@ const actions = {
       let data = res.data;
       // console.log(data.message);
       commit('setMessage',data.message);
-      window.location.reload();
+      actions.getTeam(1);
+      // window.location.reload();
     } catch (error) {
       commit('setMessage',error.response.data.message);
     }
@@ -171,6 +179,9 @@ const mutations = {
   },
   pageInfo(state,data){
     state.pageInfo = data
+  },
+  getAllTeam(state,data){
+    state.getAllTeam = data
   }
 }
 export default {

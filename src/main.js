@@ -9,9 +9,26 @@ import Toaster from 'v-toaster'
 import 'v-toaster/dist/v-toaster.css'
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
+import Multiselect from 'vue-multiselect';
+import locale from 'view-design/dist/locale/en-US';
 
-Vue.use(Toaster, {timeout: 5000})
-Vue.use(ViewUI);
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+
+import vueAwesomeCountdown from 'vue-awesome-countdown';
+
+Vue.use(vueAwesomeCountdown, 'vac');
+
+
+
+Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
+
+
+Vue.use(ViewUI, { locale });
+
+Vue.component('multiselect', Multiselect)
+
+Vue.use(Toaster, {timeout: 2000})
 
 Vue.use(Vuex)
 Vue.config.productionTip = false

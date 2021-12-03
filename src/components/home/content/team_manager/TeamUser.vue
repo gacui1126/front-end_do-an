@@ -87,5 +87,8 @@ export default {
     text-align: center;
     border: 1px solid #000;
   }
+  .modal-header{
+    background: #a9d68b;
+  }
   
 </style>
