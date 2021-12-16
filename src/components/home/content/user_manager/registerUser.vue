@@ -41,7 +41,7 @@
                     </select>
                   </div>
                   <div class="col">
-                    <button class="btn btn-danger" @click.prevent="remove(index)" v-show="index || ( !index && inputs.length > 1)">
+                    <button class="btn btn-danger" @click.prevent="remove(index)" v-show="index || ( !index && inputs.length!== undefined && inputs.length > 1)">
                       <i class="fas fa-minus-circle">xoá</i>
                     </button>       
                   </div>

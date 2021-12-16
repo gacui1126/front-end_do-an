@@ -1,10 +1,39 @@
 <template>
   <div class="projectt-cv">
+    <TaskDetail :taskCard="taskCard" :usersOfP="userT" :tagTaskDetail.sync="tagTaskDetail"/>
+    <!-- EDIT TASK -->
+    <Modal
+      v-model="editTaskNameModal"
+      title="Sửa tên task"
+      width="300">
+      <Input v-model="editT.name"/>
+      <div slot="footer">
+        <Button @click="updateTaskName(editT.id)" type="primary">update</Button>
+        <Button @click="editTaskNameModal = false" type="error">Huỷ</Button>
+      </div>
+    </Modal>
+
+    <!-- DELETE TASK -->
+    <Modal v-model="deleteT" width="360">
+        <p slot="header" style="color:#f60;text-align:center">
+            <Icon type="ios-information-circle"></Icon>
+            <span>Bạn muỗn xoá task?</span>
+        </p>
+        <div style="text-align:center">
+            <p>Task này sẽ bị xoá</p>
+            <p>Bạn vẫn muốn xoá chứ?</p>
+        </div>
+        <div slot="footer">
+            <Button type="error" size="large" long @click="deleteTask()">Delete</Button>
+        </div>
+    </Modal>
+
     <div class="header" style="text-align: center">
       <h2>
         {{dataProjectCV.name}}
       </h2>
     </div>
+
     <nav class="navbar navbar-expand-lg navbar-light" >
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -99,7 +128,7 @@
                      <div class="dropdown-divider"></div>
 
                     <DropdownItem v-for="(user,index) in usersOfP" :key="index">
-                      {{user.name}}
+                      {{user.name}} ({{user.email}})
                     </DropdownItem>
                   
                 </DropdownMenu>
@@ -108,9 +137,35 @@
           </li>
 
           <li class="nav-item">
-            <Button type="warning" class="nav-link ml-1" style="color: #fff">
+            <Button
+             @click="addTask = true" type="warning" class="nav-link ml-1" style="color: #fff">
               thêm task
             </Button>
+
+            <!-- ADD TASK -->
+            <Modal
+              v-model="addTask"
+              title="Tạo task"
+              width="300">
+              <Input v-model=taskName placeholder="Tên task ..."/>
+              <div slot="footer">
+                <Button @click="createTask(auth.user.id)" type="primary">Tạo</Button>
+                <Button @click="addTask = false" type="error">Huỷ</Button>
+              </div>
+            </Modal>
+
+            <!-- FORM TASK LIST -->
+            <Modal
+              v-model="createTaskList"
+              title="Tạo thẻ"
+              width="350">
+              <Input v-model="cardName" name="name" placeholder="Tên thẻ ..."/>
+              <div slot="footer">
+                <Button @click="createCard(auth.user.id)" type="primary">Tạo</Button>
+                <Button @click="createTaskList = false" type="error">Huỷ</Button>
+                </div>
+            </Modal>
+
           </li>
         </ul>
       </div>
@@ -120,45 +175,71 @@
     </nav>
 
     <!-- TASK -->
-    
-    <div class="task">
-      <div class="task_detail">
-        <div class="task_name">
-          <div class="task_name_header">
-            <strong>Khởi tạo</strong>
-          </div>
-          <div class="task_name_icon">
-            <div class="icon_setting">
-              <Icon type="ios-options" />
+
+    <div class="task_list">
+      <div class="list-group task" id="task" v-for="(task,i) in this.Task" :key="i">
+        
+        <div class="task_detail">
+          <div class="task_name">
+            <div class="task_name_header">
+              <strong>{{task.name}}</strong>
             </div>
-            <div class="setting_name">
-              <Button class="button">Chỉnh sửa</Button>
-              <Button class="button">Xoá</Button>
+            <div class="task_name_icon">
+              <div class="icon_setting">
+                <Icon @click="task.show = !task.show" type="ios-options" />
+
+              </div>
+              <div ref="setting" class="setting_name" v-if="task.show">
+                <a @click="editTaskName(task.id)" class="edit-name">Sửa tên</a>
+                <a @click="deteleTaskForm(task.id)" class="delete-task">Xoá</a>
+              </div>
             </div>
+ 
           </div>
 
-        </div>
+          <div class="content" v-for="(taskCard,index) in task.task_details" :key="index">
+            <!-- <Input v-model="taskCard.task_card" maxlength="100" show-word-limit type="textarea" placeholder="Nhập tiêu đề ..." style="width: 90%" /> -->
+            <button @click="taskDetail(taskCard)" class="btn task-detail" data-toggle="modal" data-target="#taskDetailModal">
+              <div class="task-detail-header">
+                <div class="tag-color" :style="Style(tag.color)" v-for="(tag,index) in tagData" :key="index"></div>
+              </div>
 
-        <div class="content" v-for="(input,i) in inputs" :key="i">
-           <Input v-if="inputs" v-model="input.task_card" maxlength="100" show-word-limit type="textarea" placeholder="Nhập tiêu đề ..." style="width: 90%" />
-          <!-- <div class="task_detail_list">
+              <div class="task-detail-top">
+                <div class="task-detail-name" type="button">
+                  {{taskCard.name}}
+                </div>
+                <div class="task-detail-icon">
+                  <Icon type="md-open" />
+                </div>
+              </div>
+              <div class="task-detail-bot">
+                <div class="time">
+                  <i class="fas fa-clock"> </i>
+                  <span> {{dataEnd}}</span>
+                </div>
+                <div class="comment ml-2">
+                  <i class="far fa-comments"> 1</i>
+                </div>
+                <div class="job-list ml-2">
+                  <i class="fas fa-check-double"> 2/3</i>
+                </div>
+                <div class="quantily-user ml-2">
+                  <i class="far fa-user"> 2</i>
+                </div>
+              </div>
+              
+            </button>
+          </div>
 
-          </div> -->
-        </div>
+          <div class="task_footer">
+            <Button @click="formCard(task.id)" id="createFormCard" type="info" class="add_card" >
+              <Icon type="md-add" />
+                Thêm thẻ
+            </Button>
 
-        <div class="task_footer">
-          <Button @click="createFormCard" id="createFormCard" type="info" class="add_card" >
-            <Icon type="md-add" />
-              Thêm thẻ
-          </Button>
-
-          <Button @click="createCard" id="createCard" type="success" class="add_card hidden">
-            <Icon type="md-add" />
-              Tạo
-          </Button>
-        </div>
+          </div>
+        </div>       
       </div>
-      
     </div>
   </div>
 </template>
@@ -168,29 +249,54 @@ import { mapState } from 'vuex'
 import projectCV from '../../../../../mixin/projectCV'
 import common from '../../../../../mixin/common'
 import Countdown from 'vuejs-countdown'
+import TaskDetail from '../allProject/TaskDetail'
+// import draggable from "vuedraggable";
+
 
 export default {
   mixins:[projectCV, common],
-  components: { Countdown },
+  components: { Countdown, TaskDetail },
 
   data(){
     return {
-      inputs: [
-        
-      ]
+      tagData:[
+        {color:'#000'},
+        {color:'rgba(102,105,230,1)'},
+        {color:'rgba(240,45,211,0.76)'}
+      ],
+      dataEnd: '27-05-2022',
+      taskCard: [],
+      deleteT: false,
+      Task:[],
+      cardName: '',
+      id_task: 0,
+      addTask: false,
+      createTaskList: false,
+      editTaskNameModal: false,
+      taskName: '',
+      inputs: [],
+      tagTaskDetail:[],
     }
   },  
   computed:{
-    ...mapState(['teamManager','project'])
+    ...mapState(['teamManager','project','auth'])
   },
-  created() {
+  mounted() {
     this.getData(),
     this.getAllTeam(),
     this.teamOfProject(),
     this.allUser(),
-    this.getTime()
+    this.getTime(),
+    this.getTask()
+    // this.parameterCard()
   },
   methods:{
+    // parameterCard(){
+    //   this.mixinParameterCard('api/task/parameter')
+    // },
+    Style(color){
+      return {background: color}
+    },
     getData(){
       this.mixinProjectCV('api/project/go',this.id)
     },
@@ -212,27 +318,68 @@ export default {
     getTime(){
       this.mixinGetTime('api/project/get-time', this.id)
     },
-    createFormCard(){
-      this.inputs.push({task_card: ''})
-      var createFormCard = document.getElementById("createFormCard");
-      createFormCard.classList.add("hidden");
-
-      var createCard = document.getElementById("createCard");
-      createCard.classList.remove("hidden");
+    formCard(id){
+      this.createTaskList = true
+      this.id_task = id
     },
-    createCard(){
-      var createFormCard = document.getElementById("createFormCard");
-      createFormCard.classList.remove("hidden");
-
-      var createCard = document.getElementById("createCard");
-      createCard.classList.add("hidden");
+    createCard(id){
+      this.mixinCreateCard('api/task-detail/create', id)
+    },
+    createTask(id){
+      this.mixinCreateTask('api/task/create',id)
+    },
+    getTask(){
+      this.mixinGetTask('api/task/get-all', this.id)
+    },
+    editTaskName(id){
+      this.editTaskNameModal = true;
+      this.mixinEditTaskName('api/task/edit-name', id)
+    },
+    updateTaskName(id){
+      this.mixinUpdateTaskName('api/task/update/name', id)
+    },
+    deteleTaskForm(id){
+      this.deleteT = true
+      this.idTask = id
+    },
+    deleteTask(){
+      this.mixinDeleteTask('api/task/delete',this.idTask)
+    },
+    taskDetail(taskCard){
+      this.mixinGetUserOfTeam('api/task-detail/get/user-of-team')
+      this.mixinGetUserTaskDetail('api/task-detail/get/user', taskCard.id)
+      this.mixinTagTaskDetail('api/tag/get-tag-taskdetail',taskCard.id)
     }
-
   }
 }
 </script>
 
 <style scoped>
+  .task-detail-header{
+    margin-top: 10px;
+    display: flex;
+  }
+  .tag-color{
+    width: 30px;
+    height: 10px;
+    border-radius: 5px;
+    margin-right: 2px;
+  }
+  .task-detail-bot{
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.596);
+  }
+
+  .list-group-item {
+    display: flex;
+    justify-content: row;
+    background: none;
+    flex-wrap: wrap;
+    padding: 0;
+    border: none;
+  }
   .add-team{
     display: flex;
   }
@@ -243,10 +390,10 @@ export default {
     text-align: center;
     border-radius: 5px;
     margin: 0 20px;
-    width: 250px;
-    /* height: 500px; */
+    width: 240px;
     background: rgb(235,236,240);
     padding: 0 0 10px 0;
+    box-shadow: 5px 10px 18px #888888;
   }
   .task_name{
     height: 30px;
@@ -257,14 +404,9 @@ export default {
     justify-content: space-between;
     cursor: pointer;
   }
-  .task_name:hover .icon_setting{
-    display: block;
-  }
-  .task_name_icon{
+  .task_name_header{
     position: relative;
-  }
-  .icon_setting{
-    display: none;
+
   }
   .content{
     width: 100%;
@@ -273,11 +415,19 @@ export default {
     width: 100px;
     background: rgb(255, 255, 255);
     position: absolute;
-    display: none;
-    /* right: 0;   */
+    display: flex;
+    flex-direction: column;
+    background: rgb(255, 255, 255);
+    border-radius: 5px;
+    box-shadow: 5px 10px 18px #888888;
   }
-  .icon_setting:focus ~ .setting_name{
-    display: block;
+  .setting_name a{
+    padding: 5px;
+    color: rgb(112, 112, 112);
+    border-bottom: solid 0.5px;
+  }
+  .setting_name a:hover{
+    background: rgb(238, 238, 238);
   }
   .task_detail_list{
     background: #fff;
@@ -298,5 +448,41 @@ export default {
   }
   .button{
     width: 100%;
+  }
+  .task_list{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .task{
+    margin: 10px 0;
+  }
+  .task-detail{
+    padding: 0 10px;
+    /* display: flex;
+    justify-content: space-between; */
+    width: 90%;
+    background: #fff;
+    margin: 5px auto;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 2px 2px #aaaaaa;
+
+  }
+  .task-detail-top{
+    display: flex;
+    justify-content: space-between;
+  }
+  .task-detail:hover{
+    background: rgb(206, 206, 206);
+  }
+  .task-detail-icon{
+    display: none;
+  }
+  .task-detail:hover .task-detail-icon{
+    display: block;
+    color: rgb(94, 94, 94);
+  }
+  .task-detail-name{
+    margin: auto 0;
   }
 </style>

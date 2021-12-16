@@ -6,6 +6,8 @@ export default{
       date_end: sessionStorage.getItem('getTime'),
       teamsOfP:[],
       usersOfP:[],
+      userT:[],
+      userCreate: null,
       page: 1,
       projects:[],
       data:[],
@@ -13,7 +15,8 @@ export default{
       value: '',
       team: [],
       user: [],
-      id: sessionStorage.getItem('idProjectCV')
+      id: sessionStorage.getItem('idProjectCV'),
+      editT: [],
     }
   },
   methods:{
@@ -49,6 +52,7 @@ export default{
         if(data){
           this.teamsOfP = data.teams
           this.usersOfP = data.users
+          this.userCreate = data.userCreate
         }
       } catch (error) {
         this.error = error
@@ -112,6 +116,190 @@ export default{
         }
       } catch (error) {
         // commit('getTime', error.data)
+      }
+    },
+    async mixinCreateTask(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            project_id: this.id,
+            user_id: id,
+            name: this.taskName
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.success(data.message)
+          this.mixinGetTask('api/task/get-all', this.id)
+          this.addTask = false
+        }
+      } catch (error) {
+        this.error(error)
+      }
+    },
+    async mixinGetTask(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.Task = data.data
+        }
+      } catch (error) {
+        this.error(error)
+      }
+    },
+    async mixinCreateCard(url, id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            cardName: this.cardName,
+            taskId: this.id_task,
+            userId: id,
+            project_id: this.id,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.success(data.message)
+          this.mixinGetTask('api/task/get-all',this.id)
+          this.createTaskList= false
+        }
+      } catch (error) {
+        if(error.response.status == 422){
+          this.error(error.response.data.message)
+        }
+      }
+    },
+    async mixinEditTaskName(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.editT = data.data;
+        }
+      } catch (error) {
+        if(error.response.status == 422){
+          this.error(error.response.data.message)
+        }
+      }
+    },
+    async mixinUpdateTaskName(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id,
+            name: this.editT.name
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.success(data.message);
+          this.mixinGetTask('api/task/get-all', this.id)  
+          this.editTaskNameModal = false;
+        }
+      } catch (error) {
+        if(error.response.status == 422){
+          this.error(error.response.data.message)
+        }
+      }
+    },
+    async mixinDeleteTask(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.success(data.message);
+          this.mixinGetTask('api/task/get-all', this.id)  
+          this.deleteT = false;
+        }
+      } catch (error) {
+        this.error(error.response.data.message)
+      }
+    },
+    async mixinGetUserTaskDetail(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.taskCard = data.data
+        }
+      } catch (error) {
+        // this.$toaster.error('Không thể lấy dữ liệu user')
+        error
+      }
+    },
+    async mixinGetUserOfTeam(url){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            team: this.teamsOfP
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.userT = this.usersOfP
+          for(let i=0; i<data.data.length;i++){
+            if(data.data[i].isArray){
+              for(let j=0; j<data.data[i].length;j++){
+                this.userT = this.usersOfP.concat(data.data[i][j])
+              }
+            }else{
+              this.userT = this.usersOfP.concat(data.data[i])
+            }
+            this.userT = Array.from(new Set(this.usersOfP[i]));
+          } 
+        }
+      } catch (error) {
+        error
+      }
+    },
+    async mixinTagTaskDetail(url,taskDetailId){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            taskDetailId: taskDetailId,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.tagTaskDetail = data.data
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
       }
     }
   }
