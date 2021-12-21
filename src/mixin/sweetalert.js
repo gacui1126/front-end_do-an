@@ -5,10 +5,10 @@ export default {
     }
   },
   methods:{
-    swdelete(mixin,url,data){
+    swdelete(mixin,url,data,index,i){
       this.$swal({
         title: 'Bạn chắc chứ?',
-        text: 'user sẽ bị xoá khỏi thẻ!',
+        text: 'Dữ liệu sẽ bị xoá!',
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Vâng tôi xoá!',
@@ -17,10 +17,10 @@ export default {
         showLoaderOnConfirm: true
       }).then((result) => {
         if(result.value) {
-          mixin(url, data)
-          this.$swal('Đã xoá', 'Xoá thành viên khỏi thẻ thành công', 'success')
+          mixin(url, data,index,i)
+          this.$swal('Đã xoá', 'Xoá dữ liệu thành công', 'success')
         } else {
-          this.$swal('Huỷ thao tác', 'Thành viên vẫn được giữ lại trong thẻ', 'info')
+          this.$swal('Huỷ thao tác', 'Dữ liệu vẫn được giữ lại', 'info')
         }
       })
     }

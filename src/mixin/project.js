@@ -45,8 +45,8 @@ export default{
           this.data.userCreate = response.data.userCreate
           this.pageInfo = response.data;
           for(let i=0; i<this.data.data.length; i++){
-            this.data.data[i].start_at = moment(String(response.data.data.data[i].start_at)).format('DD-MM-YYYY') 
-            this.data.data[i].end_at = moment(String(response.data.data.data[i].end_at)).format('DD-MM-YYYY') 
+            this.data.data[i].start_at = moment(String(response.data.data.data[i].start_at)).format('DD-MM-YYYY hh:mm:ss') 
+            this.data.data[i].end_at = moment(String(response.data.data.data[i].end_at)).format('DD-MM-YYYY hh:mm:ss') 
           }
         })
     },

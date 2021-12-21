@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import moment from 'moment'
+import moment from 'moment'
 export default{
   data(){
     return{
@@ -17,6 +17,12 @@ export default{
       user: [],
       id: sessionStorage.getItem('idProjectCV'),
       editT: [],
+      deadlineP: "",
+      outOftime: false,
+      checkDateTD: false,
+      rOutOftime: false,
+      getJob:[],
+      getCommentTD:[]
     }
   },
   methods:{
@@ -297,6 +303,118 @@ export default{
         let data = res.data;
         if(data){
           this.tagTaskDetail = data.data
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinDeadlineTaskDetail(url,taskDetailId){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            taskDetailId: taskDetailId,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.deadlineP = moment(String(data.data)).format('DD-MM-YYYY hh:mm a') 
+          if(data.dayDeadline < 2880 && data.dayDeadline >0 ){
+            this.rOutOftime = true
+            this.outOftime = false
+          }else if(data.dayDeadline == 0){
+            this.outOftime = true
+            this.rOutOftime = false
+          }else{
+            this.outOftime = false
+            this.rOutOftime = false
+          }
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinCompletedTaskDetail(url,taskDetailId){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            taskDetailId: taskDetailId,
+          }
+          });
+        let data = res.data;
+        if(data){
+          if(data.data == 0){
+            this.checkDateTD = false
+          }else{
+            this.checkDateTD = true
+            this.outOftime = false
+            this.rOutOftime = false
+          }
+          
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinGetJob(url,taskDetailId){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            taskDetailId: taskDetailId,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.getJob = data.data
+          for(let i=0; i<this.getJob.length; i++){
+            for(let j=0;j<this.getJob[i].job_details.length; j++){
+              if(this.getJob[i].job_details[j].check == 0 || this.getJob[i].job_details[j].check == null){
+                this.getJob[i].job_details[j].check = false
+              }else{
+                this.getJob[i].job_details[j].check = true
+              }
+            }
+          }
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinGetComment(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.getCommentTD = data.data
+          
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinDeleteTaskD(url,id){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.mixinGetTask('api/task/get-all',this.id)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)

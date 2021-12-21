@@ -116,7 +116,7 @@
                   </div>
                 </div>
 
-                <div class="tag-content">
+                <div class="tag-content" v-if="tagTaskDetail !== undefined && tagTaskDetail.length > 0">
                   <span class="st-icon-pinboard">
                     <i class="fas fa-tags"></i>
                     Nhãn
@@ -144,7 +144,11 @@
                               <div
                                 class="tag-c"
                                 :style="tagStyle(tag.color)"
-                                @click="addTagTask(tag.id)">
+                                @click="addTagTask(tag.id)"
+                                style="position: relative;">
+                                <div v-if="tag.check" class="icon-check" style="color:white; position: absolute; right: 0%;">
+                                  <Icon type="md-checkmark" />
+                                </div>
                               </div>
                               <Poptip class="edit-tag" title="Sửa Nhãn" width="200" placement="right-start">
                                 <div @click="editColor = tag.color">
@@ -167,7 +171,7 @@
                         <div class="dropdown-divider"></div>
                             <div class="select-color-tag mt-2" v-if="creatTagF" style="display: flex;width:90%">
                               <ColorPicker v-model="tagColor" alpha style="cursor: pointer"/>
-                              <div class="ml-1" :style="colorCreateTag(tagColor)" style="border-radius: 3px;width: 100%;height:30px"></div>
+                              <div class="ml-1" :style="tagStyle(tagColor)" style="border-radius: 3px;width: 100%;height:30px"></div>
                             </div>
                             <div class="create-tag mt-0" v-if="creatTagF">
                               <a @click="createTag(tagColor,auth.user.id)" class="btn btn-info" style="width: 90%; height:32px">Tạo</a>
@@ -183,61 +187,65 @@
                   </div>
                 </div>
 
-                <div class="deadline-content">
+                <div class="deadline-content" v-if="deadlineP !== undefined && deadlineP !== 'Invalid date'">
                   <span class="mb">
                     <i class="far fa-clock"></i>
                     Ngày hết hạn
                   </span>
                   <div class="deadline">
-                    <div class="deadline-check">
-                      <Checkbox v-model="checkDate"></Checkbox>
+                    <div @click="completedTD(!checkDateTD)" class="deadline-check">
+                      <Checkbox v-model="checkDateTD"></Checkbox>
                     </div>
                     <div class="deadline-time">
-                      <VueCtkDateTimePicker
-                        v-model="dataEnd"
-                        format="DD-MM-YYYY hh:mm:ss"
-                        overlay
-                      />
-                      <div class="date" v-if="checkDate">Đã hoàn thành</div>
+                      
+                      <div class="date-t" style="border:1px solid rgb(204,204,204);border-radius:3px;padding: 5px 10px;">
+                        {{deadlineP}}
+                      </div>
+                      <div class="date" v-if="checkDateTD">Đã hoàn thành</div>
+                      <div class="end" v-if="outOftime">Hết hạn</div>
+                      <div class="s-end" v-if="rOutOftime">Gần hết hạn</div>
                     </div>
                   </div>
                 </div>
 
-                <div class="job-content">
+                <div class="job-content" v-for="(j,i) in getJob" :key="i">
                   <div class="header-job">
                     <span>
                       <i class="fas fa-check-double"></i>
-                      Việc cần làm
+                      {{j.name}}
                     </span>
-                    <Button type="error" slot="small">Xoá</Button>
+                    <Button @click="deleteJobName(j.id,i)" type="error" slot="small">Xoá</Button>
                   </div>
                   <div class="job-percent">
                     <Progress
-                      :percent="jobPercent()"
+                      :percent="jobPercent(i)"
                       :stroke-color="['#eb5b46', '#87d068']"
                       :stroke-width="20"
                       text-inside
+                      status="active"
                     />
                   </div>
                   <div class="job">
-                    <div class="job-list" v-for="(job, i) in jobList" :key="i">
-                      <div class="job-list-left">
-                        <Checkbox v-model="job.check"></Checkbox>
-                        <span>{{ job.name }}</span>
+                    <div class="job-list" v-for="(job, index) in j.job_details" :key="index">
+                      <div class="job-list-left" style="display: flex;">
+                        <div @click="checkJob(job.id,job.check)" class="check-job">
+                          <Checkbox v-model="job.check"></Checkbox>
+                        </div>
+                        <span :class="{'text-line' : job.check}">{{ job.name }}</span>
                       </div>
-                      <div class="job-list-right">
+                      <div @click="deJobDT(job.id,i,index)" class="job-list-right">
                         <Icon type="ios-close" class="icon-del" />
                       </div>
                     </div>
                     <div class="add-job">
-                      <div class="input-add-job" v-if="addJobForm">
+                      <div class="input-add-job" v-if="j.addJobForm">
                         <Input v-model="jobName" class="input-add" />
                         <div class="button-add">
                           <div class="btn-add-left">
-                            <button @click="addJob()" class="btn btn-primary">
+                            <button @click="addJob(j.id,i)" class="btn btn-primary">
                               Thêm
                             </button>
-                            <div @click="addJobS" class="icon-de">
+                            <div @click="addJobS(i)" class="icon-de">
                               <Icon type="md-close" class="icon-de" />
                             </div>
                           </div>
@@ -254,16 +262,13 @@
                               />
                               <span>Ngày hết hạn</span>
                             </div>
-                            <div class="add-icon">
-                              <i class="fas fa-smile"></i>
-                            </div>
                           </div>
                         </div>
                       </div>
                       <button
-                        @click="addJobFormS()"
+                        @click="addJobFormS(i)"
                         class="btn btn-secondary"
-                        v-if="addJobFormShow"
+                        v-if="j.addJobFormShow"
                       >
                         Thêm một việc
                       </button>
@@ -277,36 +282,140 @@
                     <span>Bình luận</span>
                   </div>
                   <div class="input-comment">
-                    <Input placeholder="Nhập bình luận ..." />
-                    <Button type="primary" style="margin-top:5px">Đăng</Button>
+                    <Input :autosize="{minRows: 1,maxRows: 5}" type="textarea" height="auto" v-model="comment" maxlength="255" show-word-limit placeholder="Nhập bình luận..." />
+                    <Button @click="commentTD(auth.user.id)" type="primary" style="margin-top:5px">Đăng</Button>
                   </div>
-                  <div class="comment-content">
-                    <div class="avt-cmt" style="display:flex">
-                      <img
-                        class="img"
-                        style="margin-right: 5px;"
-                        src="http://localhost:8080/storage/images/l2e3ONsa0iiTF2lpDmnMIpgTYY5jCeDScprdWR49.jpg"
-                        alt=""
-                        width="30"
-                        height="30"
-                      />
-                      <div class="cmt-name">
-                        <a style="font-size:14px">Nguyễn Trường Sơn</a>
+                  <div class="comment-content" v-if="getCommentTD.length >0 ">
+                    <div v-for="(c,i) in getCommentTD" :key="i" style="margin-bottom: 5px">
+                      <div class="avt-cmt" style="display:flex">
+                        <img
+                          class="img"
+                          style="margin-right: 5px;object-fit: cover;"
+                          :src="path + c.user.img"
+                          @error="
+                            $event.target.src =
+                              'https://i.stack.imgur.com/gMbrL.jpg'
+                          "
+                          alt=""
+                          width="30"
+                          height="30"
+                        />
+                        <div class="cmt-name" style="font-weight:600">
+                          <a style="font-size:14px">{{c.user.name}}</a>
+                        </div>
                       </div>
-                    </div>
 
-                    <div class="cmt-ct" style="margin-left: 35px">
-                      <p
-                        class="cmt-content"
-                        style=" padding: 10px 10px;border-radius: 3px"
-                      >
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit. Facilis consectetur ipsam sed magnam assumenda
-                        unde porro est in nam? Explicabo commodi aliquam cumque
-                        ex cupiditate quibusdam! Iure quod doloribus sequi.
-                      </p>
-                      <a class="link-cmt">Chỉnh sửa</a> -
-                      <a class="link-cmt">Xoá</a>
+                      <div v-if="c.showComment" class="cmt-ct" style="margin-left: 35px">
+                        <p
+                          class="cmt-content"
+                          style=" padding: 5px 10px;border-radius: 3px; font-size:14px"
+                        >
+                          {{c.content}}
+                        </p>
+                        <a @click="c.showRepply = !c.showRepply" class="link-cmt">Trả lời</a> -
+                        <a @click="editComment(i)" class="link-cmt">Chỉnh sửa</a> -
+                        <a @click="deleteComment(c.id,i)" class="link-cmt">Xoá</a>
+                      </div>
+
+                      <div v-if="c.editComment" class="cmt-ct" style="margin-left: 35px">
+                        <Input 
+                          v-model="c.content" 
+                          name="comment" 
+                          class="cmt-content" 
+                          :autosize="{minRows: 1,maxRows: 5}" 
+                          type="textarea"
+                          maxlength="255" 
+                          placeholder="Nhập bình luận..." 
+                        />
+                        <Button @click="updateComment(c.id,c.content,i)" type="primary" size="small">Sửa</Button> -
+                        <!-- <a @click="editComment(i)" class="link-cmt">Huỷ</a> - -->
+                        <a @click="deleteComment(c.id,i)" class="link-cmt">Xoá</a>
+                      </div>
+
+                      <div v-if="c.showRepply" class="cmt-ct" style="margin-left: 35px;display:flex">
+                        <img
+                          class="img"
+                          style="margin-right: 5px;object-fit: cover;"
+                          :src="path + auth.user.img"
+                          @error="
+                            $event.target.src =
+                              'https://i.stack.imgur.com/gMbrL.jpg'
+                          "
+                          alt=""
+                          width="33"
+                          height="30"
+                        />
+                        <Input 
+                          v-model="RComment"
+                          @keyup.enter.native="repplyComment(c.id,auth.user.id,i)"
+                          name="comment" 
+                          class="cmt-content" 
+                          maxlength="255" 
+                          placeholder="Nhập bình luận..." 
+                          style="margin-bottom: 10px"
+                        />
+                      </div>
+
+                      <div 
+                        class="cmt-ct" 
+                        style="margin-left: 35px;"
+                        v-for="(reply,index) in c.replies" :key="index">
+                        <div v-if="reply.OEdit">
+                          <div class="cmt-ct" style="display:flex;">
+                            <img
+                              class="img"
+                              style="margin-right: 5px;object-fit: cover;"
+                              :src="path + reply.user.img"
+                              @error="
+                                $event.target.src =
+                                  'https://i.stack.imgur.com/gMbrL.jpg'
+                              "
+                              alt=""
+                              width="33"
+                              height="30"
+                            />
+                            <p
+                              class="cmt-content"
+                              style=" padding: 5px 10px;border-radius: 3px; font-size:14px;flex:1"
+                            >
+                              {{reply.content}}
+                            </p>
+                          </div>
+                          <div style="margin-left: 40px;">
+                            <a @click="editRCom(i,index)" class="link-cmt">Chỉnh sửa</a> -
+                            <a @click="deleteReplyComment(reply.id,i,index)" class="link-cmt">Xoá</a>
+                          </div>
+                        </div>
+
+                        <div v-if="reply.Edit" class="edit-re">
+                          <div class="cmt-ct" style="display:flex;">
+                            <img
+                              class="img"
+                              style="margin-right: 5px;object-fit: cover;"
+                              :src="path + reply.user.img"
+                              @error="
+                                $event.target.src =
+                                  'https://i.stack.imgur.com/gMbrL.jpg'
+                              "
+                              alt=""
+                              width="33"
+                              height="30"
+                            />
+                            <Input 
+                            v-model="reply.content"
+                            @keyup.enter.native="repplyComment(c.id,auth.user.id,i)"
+                            name="comment" 
+                            maxlength="255" 
+                            placeholder="Nhập bình luận..." 
+                            style="margin-bottom: 10px"
+                          />
+                          </div>
+                          <div style="margin-left: 40px;    margin-top: -10px;">
+                            <Button size="small" @click="UpdateReCo(reply.content,reply.id,i,index)" class="link-cmt">Sửa</Button> -
+                            <a @click="deleteReplyComment(reply.id,i,index)" class="link-cmt">Xoá</a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -325,7 +434,7 @@
                         Thành viên
                       </i>
                     </div>
-                    <div slot="content">
+                    <div slot="content" style="height: 200px">
                       <!-- <small>Thành viên của bảng</small> -->
                       <multiselect
                         class="mul-se"
@@ -428,6 +537,29 @@
                     </div>
                   </Poptip>
 
+                  <div class="date-p">
+                    <div @click.prevent="modalDate =! modalDate" class="button-link">
+                      <a>
+                        <i class="far fa-clock icon"></i>
+                        <span>Thời gian</span>
+                      </a>
+                    </div>
+                    <div v-if="modalDate" class="date-picker" style="text-align:center">
+                      <span style="font-weight:600">Thời gian</span>
+                      <div class="dropdown-divider"></div>
+                      <VueCtkDateTimePicker
+                        v-model="deadline"
+                        format="DD-MM-YYYY hh:mm a"
+                      />
+                      <div class="save-date">
+                        <button @click="setDeadLine()" type="button" class="btn btn-primary" style="width:100%">Lưu</button>
+                      </div>
+                      <div class="de-date">
+                        <button @click="deleteDeadline()" width="100%" class="btn btn-danger" style="width:100%">Gở bỏ</button>
+                      </div>
+                    </div>
+                  </div>
+
                   <Poptip
                     class="button-link"
                     title="Title"
@@ -446,35 +578,11 @@
                     <div slot="content">
                       <div class="job-ti">
                         <span>Tiêu đề</span>
-                        <Input placeholder="Nhập tiêu đề..." />
+                        <Input v-model="jobNameT" placeholder="Nhập tiêu đề..." />
                       </div>
-                      <Button type="primary" style="margin-top:5px;"
+                      <Button @click="createJobNameT()" type="primary" style="margin-top:5px;"
                         >Thêm</Button
                       >
-                    </div>
-                  </Poptip>
-
-                  <Poptip
-                    class="button-link"
-                    title="Title"
-                    content="content"
-                    placement="bottom"
-                  >
-                    <a>
-                      <i class="far fa-clock icon"></i>
-                      <span>Thời gian</span>
-                    </a>
-                    <div slot="title" style="text-align: center">
-                      <i>
-                        Thời gian
-                      </i>
-                    </div>
-                    <div slot="content">
-                      <VueCtkDateTimePicker
-                        v-model="dataEnd"
-                        format="DD-MM-YYYY hh:mm:ss"
-                        overlay
-                      />
                     </div>
                   </Poptip>
                 </div>
@@ -487,7 +595,6 @@
             </button>
           </div>
         </div>
-        <pre>{{tagTaskDetail}}</pre>
       </div>
     </div>
   </div>
@@ -499,15 +606,28 @@ import { mapState } from "vuex";
 import Multiselect from "vue-multiselect";
 import message from "../../../../../mixin/message";
 import sweetalert from "../../../../../mixin/sweetalert";
-
 export default {
-  props: ["taskCard", "userOfTeams", "usersOfP","tagTaskDetail"],
+  props: [
+    "taskCard",
+    "userOfTeams",
+    "usersOfP",
+    "tagTaskDetail",
+    "deadlineP",
+    "rOutOftime",
+    "outOftime",
+    "checkDateTD",
+    "getJob",
+    "getCommentTD",
+  ],
   mixins: [taskDetail, message, sweetalert],
   components: {
     Multiselect,
   },
   data() {
     return {
+      comment:'',
+      jobNameT: '',
+      modalDate: false,
       ct: true,
       creatTagF: false,
       index: 0,
@@ -518,12 +638,9 @@ export default {
       jobName: "",
       addJobForm: false,
       addJobFormShow: true,
-      dataEnd: "27-05-2022 04:03:00",
-      checkDate: false,
+      deadline: "",
       idTask: 0,
-      tagData: [
-        // { color: "rgba(1,3,6,1)" },
-      ],
+      tagData: [],
       jobList: [],
       per: 0,
       path: "http://localhost:8080/storage/images/",
@@ -545,28 +662,31 @@ export default {
     tagStyle(color) {
       return { background: color };
     },
-    addJobFormS() {
-      this.addJobForm = !this.addJobForm;
-      this.addJobFormShow = !this.addJobFormShow;
+    addJobFormS(i) {
+      this.$props.getJob[i].addJobForm = !this.$props.getJob[i].addJobForm;
+      this.$props.getJob[i].addJobFormShow = !this.$props.getJob[i].addJobFormShow;
     },
-    addJobS() {
-      this.addJobForm = !this.addJobForm;
-      this.addJobFormShow = !this.addJobFormShow;
+    addJobS(i) {
+      this.$props.getJob[i].addJobForm = !this.$props.getJob[i].addJobForm;
+      this.$props.getJob[i].addJobFormShow = !this.$props.getJob[i].addJobFormShow;
     },
-    addJob() {
-      this.jobList.push({ name: this.jobName, check: false });
+    addJob(jobId,index) {
+      this.mixinAddJob('api/job/job-detail/create',this.jobName,jobId,index)
+    },
+    deJobDT(id,i,index){
+      this.mixinDeJobDT('api/job/job-detail/delete',id,i,index)
     },
     crtag(){
       this.creatTagF = !this.creatTagF 
       this.ct = !this.ct
     },
-    jobPercent() {
-      let per = this.jobList.filter((arrJob) => arrJob.check == true);
-      let lenthJob = this.jobList.length;
-      if (this.jobList.length == 0) {
+    jobPercent(i) {
+      let per = this.$props.getJob[i].job_details.filter((arrJob) => arrJob.check == true);
+      let lenthJob = this.$props.getJob[i].job_details.length;
+      if (this.$props.getJob[i].job_details.length == 0) {
         return 0;
       } else {
-        return ((per.length / lenthJob) * 10 * 10).toFixed();
+        return parseFloat(((per.length / lenthJob) * 10 * 10).toFixed(2));
       }
     },
     addTaskUser() {
@@ -584,12 +704,73 @@ export default {
     },
     updateTag(color,id,index){
       this.mixinUpdateTag('api/tag/update',color,id,index)
+    },
+    setDeadLine(){
+      this.mixinSetDeadLine('api/task-detail/deadline/set')
+    },
+    deleteDeadline(){
+      this.mixinDeleteDeadline('api/task-detail/deadline/delete')
+    },
+    completedTD(checkDate){
+      this.mixinCompletedTD('api/task-detail/completed',checkDate)
+    },
+    createJobNameT(){
+      this.mixinCreateJobNameT('api/job/create')
+    },
+    deleteJobName(id,i){
+      this.swdelete(this.mixinDeleteJobName, "api/job/delete", id,i);
+    },
+    checkJob(id,check){
+      this.mixinCheckJob('api/job/job-detail/check',id,check)
+    },
+    commentTD(userId){
+      this.mixinCommentTD('api/comment/create',userId)
+    },
+    deleteComment(id,i){
+      this.swdelete(this.mixinDeleteComment, "api/comment/delete", id,i);
+    },
+    editComment(i){
+      this.mixinEditComment(i)
+    },
+    updateComment(id,comment,i){
+      this.mixinUpdateComment(`api/comment/update?id=${id}`,comment,i)
+    },
+    repplyComment(parent_id,userId,i){
+      this.mixinRepplyComment('api/comment/repply',parent_id,userId,i)
+    },
+    deleteReplyComment(id,i,index){
+      this.swdelete(this.mixinDeleteReplyComment,'api/comment/reply/delete',id,i,index)
+    },
+    editRCom(i,index){
+      this.mixinEditRCom(i,index)
+    },
+    UpdateReCo(comment,id,i,index){
+      this.mixinUpdateReCo('api/comment/reply/update',comment,id,i,index)
     }
   },
 };
 </script>
 
 <style scoped>
+.text-line{
+  text-decoration-line: line-through;
+  color: #929292;
+}
+.date-picker{
+  width: 100%;
+  height: 180px;
+  padding: 10px;
+  /* border: solid 1px #000; */
+  background: #ffffff;
+  border-radius: 3px;
+  position: absolute;
+  top: 50%;
+  right: 104%;
+  box-shadow: 2px 2px 2px 2px #c7c7c7;
+}
+.date-p{
+  position: relative;
+}
 .edit-tag{
   cursor: pointer;
   margin: auto;
@@ -707,6 +888,10 @@ export default {
 .job-content {
   font-size: 18px;
   font-weight: 600;
+  border: 1px solid rgb(216, 215, 215);
+  margin: 2px 0;
+  padding: 5px;
+  border-radius: 3px;
 }
 .job {
   margin: 5px 0;
@@ -714,6 +899,18 @@ export default {
 .date {
   font-size: 12px;
   background: darkseagreen;
+  display: flex;
+  justify-content: center;
+}
+.end{
+  font-size: 12px;
+  background: rgb(180, 116, 116);
+  display: flex;
+  justify-content: center;
+}
+.s-end{
+  font-size: 12px;
+  background: rgb(209, 200, 151);
   display: flex;
   justify-content: center;
 }

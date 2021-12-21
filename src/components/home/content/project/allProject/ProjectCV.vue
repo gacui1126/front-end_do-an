@@ -1,6 +1,16 @@
 <template>
   <div class="projectt-cv">
-    <TaskDetail :taskCard="taskCard" :usersOfP="userT" :tagTaskDetail.sync="tagTaskDetail"/>
+    <TaskDetail 
+      :rOutOftime.sync="rOutOftime" 
+      :outOftime.sync="outOftime" 
+      :taskCard="taskCard" 
+      :usersOfP="userT" 
+      :tagTaskDetail.sync="tagTaskDetail" 
+      :deadlineP.sync="deadlineP"
+      :checkDateTD.sync="checkDateTD"
+      :getJob.sync="getJob"
+      :getCommentTD.sync="getCommentTD"
+    />
     <!-- EDIT TASK -->
     <Modal
       v-model="editTaskNameModal"
@@ -177,6 +187,7 @@
     <!-- TASK -->
 
     <div class="task_list">
+      <draggable style="display:flex;flex-wrap: wrap;" @change="log">
       <div class="list-group task" id="task" v-for="(task,i) in this.Task" :key="i">
         
         <div class="task_detail">
@@ -199,7 +210,7 @@
 
           <div class="content" v-for="(taskCard,index) in task.task_details" :key="index">
             <!-- <Input v-model="taskCard.task_card" maxlength="100" show-word-limit type="textarea" placeholder="Nhập tiêu đề ..." style="width: 90%" /> -->
-            <button @click="taskDetail(taskCard)" class="btn task-detail" data-toggle="modal" data-target="#taskDetailModal">
+            <button @click.prevent="taskDetail(taskCard)" class="btn task-detail" data-toggle="modal" data-target="#taskDetailModal">
               <div class="task-detail-header">
                 <div class="tag-color" :style="Style(tag.color)" v-for="(tag,index) in tagData" :key="index"></div>
               </div>
@@ -208,8 +219,8 @@
                 <div class="task-detail-name" type="button">
                   {{taskCard.name}}
                 </div>
-                <div class="task-detail-icon">
-                  <Icon type="md-open" />
+                <div @click.stop="deleteTaskD(taskCard.id)" class="task-detail-icon">
+                  <i class="fas fa-times-circle"></i>
                 </div>
               </div>
               <div class="task-detail-bot">
@@ -238,9 +249,10 @@
             </Button>
 
           </div>
-        </div>       
       </div>
     </div>
+    </draggable>
+    </div>       
   </div>
 </template>
 
@@ -250,12 +262,13 @@ import projectCV from '../../../../../mixin/projectCV'
 import common from '../../../../../mixin/common'
 import Countdown from 'vuejs-countdown'
 import TaskDetail from '../allProject/TaskDetail'
-// import draggable from "vuedraggable";
+import draggable from "vuedraggable";
+import sweetalert from "../../../../../mixin/sweetalert";
 
 
 export default {
-  mixins:[projectCV, common],
-  components: { Countdown, TaskDetail },
+  mixins:[projectCV, common,sweetalert],
+  components: { Countdown, TaskDetail ,draggable},
 
   data(){
     return {
@@ -276,6 +289,7 @@ export default {
       taskName: '',
       inputs: [],
       tagTaskDetail:[],
+      dayDeadline: 0,
     }
   },  
   computed:{
@@ -291,9 +305,9 @@ export default {
     // this.parameterCard()
   },
   methods:{
-    // parameterCard(){
-    //   this.mixinParameterCard('api/task/parameter')
-    // },
+    log: function(evt) {
+      window.console.log(evt);
+    },
     Style(color){
       return {background: color}
     },
@@ -345,10 +359,17 @@ export default {
     deleteTask(){
       this.mixinDeleteTask('api/task/delete',this.idTask)
     },
+    deleteTaskD(id){
+      this.swdelete(this.mixinDeleteTaskD, "api/task-detail/delete", id);
+    },
     taskDetail(taskCard){
       this.mixinGetUserOfTeam('api/task-detail/get/user-of-team')
       this.mixinGetUserTaskDetail('api/task-detail/get/user', taskCard.id)
       this.mixinTagTaskDetail('api/tag/get-tag-taskdetail',taskCard.id)
+      this.mixinDeadlineTaskDetail('api/task-detail/deadline/get',taskCard.id)
+      this.mixinCompletedTaskDetail('api/task-detail/completed/get',taskCard.id)
+      this.mixinGetJob('api/job/get',taskCard.id)
+      this.mixinGetComment('api/comment/get',taskCard.id)
     }
   }
 }
@@ -477,6 +498,12 @@ export default {
   }
   .task-detail-icon{
     display: none;
+  }
+  .task-detail-icon i{
+    color: rgb(156, 156, 156);
+  }
+  .task-detail-icon i:hover{
+    color: rgb(17, 17, 17);
   }
   .task-detail:hover .task-detail-icon{
     display: block;
