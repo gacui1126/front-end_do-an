@@ -643,7 +643,7 @@ export default {
       tagData: [],
       jobList: [],
       per: 0,
-      path: "http://localhost:8080/storage/images/",
+      path: "http://127.0.0.1:8080/storage/images/",
     };
   },
   computed: {

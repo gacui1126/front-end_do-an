@@ -1,5 +1,6 @@
 <template>
   <div class="container table-responsive-sm">
+    <pre>{{info.id}}</pre>
     <div class="title_user">
       <h2>Dự án của tôi</h2>
     </div>
@@ -16,25 +17,25 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Tên</th>
-          <th scope="col">Người tạo</th>
           <th scope="col">Ngày khởi tạo</th>
           <th scope="col">Kết thúc</th>
-          <th scope="col">Số lượng TV</th>
           <th scope="col">Hành động</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-for="(projects,i) in this.myProject" :key="i">
         <tr>
-          <th scope="row">1</th>
-          <td>Product landing page</td>
-          <td>Nguyễn Trường Sơn</td>
-          <td>20/11/2021</td>
-          <td>20/3/2020</td>
-          <td>15</td>
+          <th scope="row">{{projects.id}}</th>
+          <td>{{projects.name}}</td>
+          <td>{{projects.start_at}}</td>
+          <td>{{projects.end_at}}</td>
           <td>
-            <button type="button" class="btn btn-warning">Sửa</button> |
-            <button type="button" class="btn btn-danger">Xoá</button> | 
-            <button type="button" class="btn btn-primary">Xem thông tin</button> 
+            <Button @click="projectCV(projects.id)"
+                      type="warning" size="small" 
+                      data-toggle="modal" 
+                      data-target="#infoProjectModal">
+                <Icon type="ios-arrow-forward" />
+                Vào dự án
+            </Button> 
           </td>
         </tr>
       </tbody>
@@ -53,23 +54,29 @@
 </template>
 
 <script>
+import myProject from '../../../../../mixin/myProject'
 
 export default {
+  mixins:[myProject],
   data(){
     return {
       list_user: {},
     }
   },
-  
-  components: {},
-  computed: {
-
-  },
   created(){
-
+    this.getMyProject(this.info.id)
   },
   methods:{ 
-    
+    // getInfoUser(){
+    //   this.mixinGetInfoUser('api/user/info')
+    // },
+    getMyProject(page = 1){
+      this.mixinGetMyProject(page)
+    },
+    projectCV(id){
+      window.sessionStorage.setItem('idProjectCV', id)
+      this.$router.push({ name: 'projectCV'});
+    }
   },
   
   

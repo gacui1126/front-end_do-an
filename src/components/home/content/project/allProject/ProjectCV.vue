@@ -53,18 +53,30 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
           
           <li class="nav-item active mr-1">
-            <Button class="nav-link" >
+            <!-- <Button class="nav-link" >
               <Dropdown trigger="click" style="margin-left: 20px">
                 <a href="javascript:void(0)">
                     Chuyển dự án
                     <Icon type="ios-arrow-down"></Icon>
                 </a>
                 <DropdownMenu slot="list">
-                    <DropdownItem>JavaScript quiz game</DropdownItem>
-                    <DropdownItem>XYZ</DropdownItem>
+                    <DropdownItem @click="projectGO(project.id)" v-for="(project,i) in this.switchPro" :key="i">{{project.name}}</DropdownItem>
+
                 </DropdownMenu>
               </Dropdown>
-            </Button>
+            </Button> -->
+
+            <Poptip title="Chuyển dự án" placement="bottom">
+              <Button>
+                Chuyển dự án
+                <Icon type="ios-arrow-down"></Icon>
+                </Button>
+                <div slot="content">
+                  <div @click="projectGO(project.id)" class="pro" v-for="(project,i) in this.switchPro" :key="i">
+                    {{project.name}}
+                  </div>
+                </div>
+            </Poptip>
           </li>
           <li class="nav-item mr-1">
             <Button class="nav-link" >
@@ -210,13 +222,13 @@
 
           <div class="content" v-for="(taskCard,index) in task.task_details" :key="index">
             <!-- <Input v-model="taskCard.task_card" maxlength="100" show-word-limit type="textarea" placeholder="Nhập tiêu đề ..." style="width: 90%" /> -->
-            <button @click.prevent="taskDetail(taskCard)" class="btn task-detail" data-toggle="modal" data-target="#taskDetailModal">
+            <button @click.prevent="taskDetail(taskCard,taskCard.tags)" class="btn task-detail" data-toggle="modal" data-target="#taskDetailModal">
               <div class="task-detail-header">
-                <div class="tag-color" :style="Style(tag.color)" v-for="(tag,index) in tagData" :key="index"></div>
+                <div class="tag-color" :style="Style(tag.color)" v-for="(tag,index) in taskCard.tags" :key="index"></div>
               </div>
 
               <div class="task-detail-top">
-                <div class="task-detail-name" type="button">
+                <div class="task-detail-name" type="button" style="margin: auto 0">
                   {{taskCard.name}}
                 </div>
                 <div @click.stop="deleteTaskD(taskCard.id)" class="task-detail-icon">
@@ -224,18 +236,20 @@
                 </div>
               </div>
               <div class="task-detail-bot">
-                <div class="time">
+                <div v-if="taskCard.deadline !== undefined && taskCard.deadline !== 'Invalid date'"
+                    class="time mr-2 mt-1"
+                    :class="checkCom(taskCard)">
                   <i class="fas fa-clock"> </i>
-                  <span> {{dataEnd}}</span>
+                  <span> {{taskCard.deadline}}</span>
                 </div>
-                <div class="comment ml-2">
-                  <i class="far fa-comments"> 1</i>
+                <div v-if="taskCard.comments !== undefined && taskCard.comments.length>0" class="comment mr-2 mt-1">
+                  <i class="far fa-comments"> {{taskCard.count_comment}}</i>
                 </div>
-                <div class="job-list ml-2">
-                  <i class="fas fa-check-double"> 2/3</i>
+                <div v-if="taskCard.jobs !== undefined && taskCard.jobs.length>0" class="job-list mr-2 mt-1">
+                  <i class="fas fa-check-double"> {{taskCard.count_job_completed}}/{{taskCard.count_job}}</i>
                 </div>
-                <div class="quantily-user ml-2">
-                  <i class="far fa-user"> 2</i>
+                <div v-if="taskCard.users !== undefined && taskCard.users.length>0" class="quantily-user mr-2 mt-1">
+                  <i class="far fa-user"> {{taskCard.count_user}}</i>
                 </div>
               </div>
               
@@ -272,12 +286,6 @@ export default {
 
   data(){
     return {
-      tagData:[
-        {color:'#000'},
-        {color:'rgba(102,105,230,1)'},
-        {color:'rgba(240,45,211,0.76)'}
-      ],
-      dataEnd: '27-05-2022',
       taskCard: [],
       deleteT: false,
       Task:[],
@@ -300,11 +308,28 @@ export default {
     this.getAllTeam(),
     this.teamOfProject(),
     this.allUser(),
-    this.getTime(),
+    this.getTime()
     this.getTask()
-    // this.parameterCard()
+    this.checkLogin()
+    this.switchProject()
+
+  },
+  created(){
+    // this.taskParameter()
   },
   methods:{
+    checkLogin(){
+      this.$store.dispatch('checkLogin')
+    },
+    checkCom(taskCard){
+      if(taskCard.completed == 1){
+        return 'task-completed'
+      }if(this.outOftime == true){
+        return 'task-end'
+      }if(this.rOutOftime == true){
+        return 'task-time-out'
+      }
+    },
     log: function(evt) {
       window.console.log(evt);
     },
@@ -362,16 +387,42 @@ export default {
     deleteTaskD(id){
       this.swdelete(this.mixinDeleteTaskD, "api/task-detail/delete", id);
     },
-    taskDetail(taskCard){
+    taskDetail(taskCard,tags){
       this.mixinGetUserOfTeam('api/task-detail/get/user-of-team')
       this.mixinGetUserTaskDetail('api/task-detail/get/user', taskCard.id)
-      this.mixinTagTaskDetail('api/tag/get-tag-taskdetail',taskCard.id)
+      // this.mixinTagTaskDetail('api/tag/get-tag-taskdetail',taskCard.id)
+      this.tagTaskDetail = tags
       this.mixinDeadlineTaskDetail('api/task-detail/deadline/get',taskCard.id)
       this.mixinCompletedTaskDetail('api/task-detail/completed/get',taskCard.id)
       this.mixinGetJob('api/job/get',taskCard.id)
       this.mixinGetComment('api/comment/get',taskCard.id)
+    },
+    switchProject(){
+      this.mixinSwitchProject('api/project/switch-pro')
+    },
+    projectGO(id){
+      window.sessionStorage.setItem('idProjectCV', id)
+      window.location.reload();
+      // this.$router.push({ name: 'projectCV'});
     }
-  }
+  },
+  watch: {
+    tagTaskDetail: function(){
+      this.getTask()
+    },
+    deadlineP: function(){
+      this.getTask()
+    },
+    getCommentTD: function(){
+      this.getTask()
+    },
+    getJob: function(){
+      this.getTask()
+    },
+    usersOfP: function(){
+      this.getTask()
+    }
+  },
 }
 </script>
 
@@ -388,7 +439,7 @@ export default {
   }
   .task-detail-bot{
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     font-size: 12px;
     color: rgba(0, 0, 0, 0.596);
   }
@@ -443,12 +494,14 @@ export default {
     box-shadow: 5px 10px 18px #888888;
   }
   .setting_name a{
-    padding: 5px;
+    padding: 2px 0;
     color: rgb(112, 112, 112);
-    border-bottom: solid 0.5px;
+    /* border-bottom: solid 0.5px; */
   }
   .setting_name a:hover{
     background: rgb(238, 238, 238);
+    border-radius: 5px;
+
   }
   .task_detail_list{
     background: #fff;
@@ -512,4 +565,35 @@ export default {
   .task-detail-name{
     margin: auto 0;
   }
+  .task-completed{
+    border: 0.5px solid rgb(174, 211, 131);
+    padding: 0px 3px;
+    border-radius: 5px;
+    background: rgb(174, 211, 131);
+  }
+  .task-end{
+    border: 0.5px solid rgb(211, 131, 131);
+    padding: 0px 3px;
+    border-radius: 5px;
+    background: rgb(211, 131, 131);
+  }
+  .task-time-out{
+    border: 0.5px solid rgb(210, 211, 131);
+    padding: 0px 3px;
+    border-radius: 5px;
+    background: rgb(210, 211, 131);
+  }
+  .pro{
+    cursor: pointer;
+    width: 100%;
+    padding: 3px 5px;
+  }
+  .pro:hover{
+    background: rgb(230, 230, 230);
+    border-radius: 3px;
+    width: 100%;
+  }
+  /* .edit-name{
+    background: #888888;
+  } */
 </style>

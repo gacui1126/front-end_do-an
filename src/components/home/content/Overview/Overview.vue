@@ -51,6 +51,12 @@ export default {
 
     const tt = document.getElementById('team-data');
     new Chart(tt, this.teamData);
+    this.checkLogin()
+  },
+  methods:{
+    checkLogin(){
+      this.$store.dispatch('checkLogin')
+    },
   }
 }
 </script>

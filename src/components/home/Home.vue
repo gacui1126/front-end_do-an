@@ -22,7 +22,13 @@ export default {
       
     }
   },
-  components: { Header, Aside, Footer}
+  components: { Header, Aside, Footer},
+  // created(){
+  //   this.checkPer()
+  // },
+  methods:{
+
+  }
 }
 </script>
 

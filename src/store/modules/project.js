@@ -3,14 +3,16 @@ const state = {
   getAllTeams: [],
   getAllUsers: [],
   dataProjectCV: [],
-  getTime: ''
+  getTime: '',
+  token: localStorage.getItem('token')
+
 }
 const getters = {
 
 }
 const actions = {
   async getAllDataP({commit}){
-    await axios.get('api/project/get-all-data')
+    await axios.get('api/project/get-all-data',{headers: { Authorization: 'Bearer ' + state.token}})
       .then(response =>
         { 
           // console.log(response.data.teams)

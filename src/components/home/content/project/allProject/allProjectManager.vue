@@ -218,14 +218,14 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">id</th>
+              <th scope="col">tt</th>
               <th scope="col">Tên team</th>
               <th scope="col">Hành động</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(teams,i) in this.infoProject.project.teams" :key="i">
-              <th scope="row">{{teams.id}}</th>
+              <th scope="row">{{i+1}}</th>
               <td>{{teams.name}}</td>
               <td>
                 <Button @click="teamDetailP(teams.id)" type="info">Chi tiết</Button>
@@ -242,14 +242,14 @@
         <table class="table table-warning table-bordered">
           <thead>
             <tr>
-              <th scope="col">id</th>
+              <th scope="col">tt</th>
               <th scope="col">Tên</th>
               <th scope="col">Email</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(users,i) in this.teamDetail" :key="i">
-              <th scope="row">{{users.id}}</th>
+              <th scope="row">{{i+1}}</th>
               <td>{{users.name}}</td>
               <td>{{users.email}}</td>
             </tr>
@@ -264,18 +264,16 @@
         <table class="table">
         <thead>
           <tr>
-            <th scope="col">id</th>
+            <th scope="col">tt</th>
             <th scope="col">Tên</th>
-            <th scope="col">Hành động</th>
+            <th scope="col">Email</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(users,i) in this.infoProject.project.users" :key="i">
-            <th scope="row">{{users.id}}</th>
+            <th scope="row">{{i+1}}</th>
             <td>{{users.name}}</td>
-            <td>
-              <Button type="info">Chi tiết</Button>
-            </td>
+            <td>{{users.email}}</td>
           </tr>
         </tbody>
       </table>
@@ -284,19 +282,21 @@
     <table class="table table-success table-bordered">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">ID</th>
+          <th scope="col">tt</th>
           <th scope="col">Tên</th>
           <th scope="col">Bắt đầu</th>
           <th scope="col">Kết thúc</th>
+          <th scope="col">Thời hạn</th>
           <th scope="col">Hành động</th>
         </tr>
       </thead>
       <tbody>
           <tr v-for="(projects,i) in this.data.data" :key="i">
-            <th scope="row">{{projects.id}}</th>
+            <th scope="row">{{i + data.from}}</th>
             <td>{{projects.name}}</td>
             <td>{{projects.start_at}}</td>
             <td>{{projects.end_at}}</td>
+            <td>{{projects.deadline}} Ngày</td>
             <td>
               <Button @click="editProject(projects.id, i)" type="primary" size="small">Sửa</Button> |
               <Button @click="deleteProjectModal(projects.id, i)" type="error" size="small">Xoá</Button> |
@@ -314,11 +314,11 @@
     </table>
     <div class="paginate">
       <div class="paginate_list">
-          <Page :total="this.pageInfo.total" 
-                :current="this.pageInfo.current_page" 
-                :page-size="parseInt(this.pageInfo.total)" 
+          <Page :total="this.data.total*this.total" 
+                :current="this.data.current_page" 
+                :page-size="parseInt(this.data.total)" 
                 @on-change="getProject"
-                v-if="this.pageInfo"
+                v-if="this.data"
           />
       </div>
     </div>
@@ -346,12 +346,16 @@ export default {
   created(){
     this.getProject()
     this.getAllDataP()
+    this.checkLogin()
   },
   computed:{
     ...mapState(['project','auth'])
   },
 
   methods:{
+    checkLogin(){
+      this.$store.dispatch('checkLogin')
+    },
     getAllDataP(){
       this.$store.dispatch('getAllDataP')
     },

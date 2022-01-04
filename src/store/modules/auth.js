@@ -61,22 +61,24 @@ const actions = {
     window.location.replace('/')
   },
   async editInfo({commit},id){
+    let token = localStorage.getItem('token')
     try {
       let res = await axios({
         method: 'post',
         url: 'api/user/edit',
         data: {
           id: id
-        }
+        },
+        headers:{Authorization: 'Bearer ' + token}
       });
       let data = res.data;
-      // console.log(data.data);
       commit('editUser',data.data);
     } catch (error) {
       commit('error',error.data);
     }
   },
   async updateUserInfo({commit},id){
+    let token = localStorage.getItem('token')
     try {
       let res = await axios({
         method: 'post',
@@ -87,7 +89,8 @@ const actions = {
           age: state.editUser.age,
           address: state.editUser.address,
           phone: state.editUser.phone
-        }
+        },
+        headers:{Authorization: 'Bearer ' + token}
       });
       let data = res.data;
       commit('updateUser',data.success);
@@ -107,6 +110,7 @@ const actions = {
     }
   },
   async resetPass({commit},pass){
+    let token = localStorage.getItem('token')
     try {
       let res = await axios({
         method: 'post',
@@ -116,7 +120,8 @@ const actions = {
           password_old: pass.password_old,
           password_new: pass.password_new,
           password_re: pass.password_re
-        }
+        },
+        headers:{Authorization: 'Bearer ' + token}
       });
       let data = res.data;
       commit('updateUser',data.message);

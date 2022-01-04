@@ -25,6 +25,7 @@
     "vue-chartkick": "^1.1.0",
     "vue-ctk-date-time-picker": "^2.5.0",
     "vue-datetime": "^1.0.0-beta.14",
+    "vue-el-element": "^1.12.8",
     "vue-multiselect": "^2.1.6",
     "vue-router": "^3.5.3",
     "vue-sweet-calendar": "^0.4.1",

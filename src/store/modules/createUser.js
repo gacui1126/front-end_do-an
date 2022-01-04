@@ -46,23 +46,25 @@ const actions = {
         }
     }
   },
-  async getAllUser({commit},page){
-    // console.log(page)
-    await axios.get(`/api/user/get-all?page=${page}&total=${state.total}`)
-    .then(response => {
-      commit('getUser',response.data.data)
-      commit('pageInfo',response.data)
-      // console.log(response.data.data)
-    })
-  },
+  // async getAllUser({commit},page){
+  //   // console.log(page)
+  //   await axios.get(`/api/user/get-all?page=${page}&total=${state.total}`)
+  //   .then(response => {
+  //     commit('getUser',response.data.data)
+  //     commit('pageInfo',response.data)
+  //     // console.log(response.data.data)
+  //   })
+  // },
   async editUser({commit}, id){
+    let token = localStorage.getItem('token')
     try {
       let res = await axios({
         method: 'post',
         url: 'api/user/edit',
         data: {
           id : id
-        }
+        },
+        headers:{Authorization: 'Bearer ' + token}
       });
       let data = res.data;
       if(data){
@@ -74,32 +76,32 @@ const actions = {
         commit('edit',error.response);
     }
   },
-  async updateUser({commit},id){
-    // console.log(state.edit.team_name)
-    try {
-      let res = await axios({
-        method: 'post',
-        url: 'api/user/update',
-        data: {
-          id : id,
-          email: state.edit.email,
-          name: state.edit.name,
-          age: state.edit.age,
-          address: state.edit.address,
-          phone: state.edit.phone,
-          teamName: state.teamName
-        }
-      });
-      let data = res.data;
-      if(data){
-        // console.log(data.data)
-        commit('update',data.data);
-        window.location.reload();
-      }
-    } catch (error) {
-        commit('update',error.response);
-    }
-  },
+  // async updateUser({commit},id){
+  //   // console.log(state.edit.team_name)
+  //   try {
+  //     let res = await axios({
+  //       method: 'post',
+  //       url: 'api/user/update',
+  //       data: {
+  //         id : id,
+  //         email: state.edit.email,
+  //         name: state.edit.name,
+  //         age: state.edit.age,
+  //         address: state.edit.address,
+  //         phone: state.edit.phone,
+  //         teamName: state.teamName
+  //       }
+  //     });
+  //     let data = res.data;
+  //     if(data){
+  //       // console.log(data.data)
+  //       commit('update',data.data);
+  //       window.location.reload();
+  //     }
+  //   } catch (error) {
+  //       commit('update',error.response);
+  //   }
+  // },
   async deleteUser({commit},id){
     try {
       let res = await axios({
@@ -120,8 +122,12 @@ const actions = {
     }
   },
   async uploadImg({commit},data){
+    let token = localStorage.getItem('token')
     const config = {
-      headers: { 'content-type': 'multipart/form-data' }
+      headers: { 
+        'content-type': 'multipart/form-data',
+        Authorization: 'Bearer ' + token
+      }
     }
     await axios.post('api/user/img/upload', data, config )
     .then(function (response) {

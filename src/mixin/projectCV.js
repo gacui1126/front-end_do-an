@@ -22,7 +22,9 @@ export default{
       checkDateTD: false,
       rOutOftime: false,
       getJob:[],
-      getCommentTD:[]
+      getCommentTD:[],
+      token: localStorage.getItem('token'),
+      switchPro: []
     }
   },
   methods:{
@@ -34,12 +36,12 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
           this.dataProjectCV = data.data
-          // window.sessionStorage.setItem('getTime',data.date_end)
         }
       } catch (error) {
         this.dataProjectCV = error.data
@@ -52,7 +54,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -72,11 +75,12 @@ export default{
           data: {
             team: this.team,
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
-          this.success(data.message)
+          this.successNotice(data.message)
           for(let i = 0;i< this.team.length; i++){
             this.teamsOfP.unshift(this.team[i])
           }
@@ -86,6 +90,7 @@ export default{
       }
     },
     async mixinAddUserP(url,id){
+
       try {
         let res = await axios({
           method: 'post',
@@ -93,11 +98,12 @@ export default{
           data: {
             user: this.user,
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
-          this.success(data.message)
+          this.successNotice(data.message)
           for(let i = 0;i< this.user.length; i++){
             this.usersOfP.unshift(this.user[i])
           }
@@ -114,7 +120,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -137,7 +144,7 @@ export default{
           });
         let data = res.data;
         if(data){
-          this.success(data.message)
+          this.successNotice(data.message)
           this.mixinGetTask('api/task/get-all', this.id)
           this.addTask = false
         }
@@ -157,6 +164,26 @@ export default{
         let data = res.data;
         if(data){
           this.Task = data.data
+          // window.console.log(this.Task)
+          for(let i=0; i< data.data.length;i++){
+            for(let j=0; j<data.data[i].task_details.length; j++){
+              this.Task[i].task_details[j].deadline = moment(String(data.data[i].task_details[j].deadline)).format('DD-MM-YYYY')
+              
+              this.Task[i].task_details[j].count_comment += this.Task[i].task_details[j].comments.length 
+              this.Task[i].task_details[j].count_user = this.Task[i].task_details[j].users.length
+              for(let z = 0; z < data.data[i].task_details[j].comments.length; z++){
+                this.Task[i].task_details[j].count_comment += this.Task[i].task_details[j].comments[z].replies.length
+              }
+              for(let h = 0; h < data.data[i].task_details[j].jobs.length; h++){
+                this.Task[i].task_details[j].count_job = this.Task[i].task_details[j].jobs[h].job_details.length
+                for(let g = 0; g < data.data[i].task_details[j].jobs[h].job_details.length; g++){
+                  if(data.data[i].task_details[j].jobs[h].job_details[g].check == 1){
+                    this.Task[i].task_details[j].count_job_completed += 1;
+                  }
+                }   
+              }
+            }
+          }
         }
       } catch (error) {
         this.error(error)
@@ -176,7 +203,7 @@ export default{
           });
         let data = res.data;
         if(data){
-          this.success(data.message)
+          this.successNotice(data.message)
           this.mixinGetTask('api/task/get-all',this.id)
           this.createTaskList= false
         }
@@ -217,7 +244,7 @@ export default{
           });
         let data = res.data;
         if(data){
-          this.success(data.message);
+          this.successNotice(data.message)
           this.mixinGetTask('api/task/get-all', this.id)  
           this.editTaskNameModal = false;
         }
@@ -238,7 +265,7 @@ export default{
           });
         let data = res.data;
         if(data){
-          this.success(data.message);
+          this.successNotice(data.message)
           this.mixinGetTask('api/task/get-all', this.id)  
           this.deleteT = false;
         }
@@ -258,6 +285,7 @@ export default{
         let data = res.data;
         if(data){
           this.taskCard = data.data
+          
         }
       } catch (error) {
         // this.$toaster.error('Không thể lấy dữ liệu user')
@@ -418,6 +446,21 @@ export default{
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinSwitchProject(url){
+      try {
+        let res = await axios({
+          method: 'get',
+          url: url,
+          headers: { Authorization: 'Bearer ' + this.token}
+          });
+        let data = res.data;
+        if(data){
+          this.switchPro = data.data
+        }
+      } catch (error) {
+          this.error(error.response.data.message)
       }
     }
   }

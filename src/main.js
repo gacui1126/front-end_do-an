@@ -22,6 +22,9 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import VueAutosizer from 'vue-autosizer'
 import 'vue-autosizer/dist/vue-autosizer.min.css'
+import VueElElements from 'vue-el-element'
+ 
+Vue.use(VueElElements)
  
 Vue.use(VueAutosizer)
 Vue.use(VueSweetalert2);

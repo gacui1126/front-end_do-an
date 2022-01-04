@@ -12,7 +12,9 @@ const state = {
   idUser: '',
   total: 4,
   pageInfo: null,
-  getAllTeam: []
+  getAllTeam: [],
+  token: localStorage.getItem('token')
+
 }
 const getters = {
   data: state => state.data
@@ -27,7 +29,7 @@ const actions = {
       })
   },
   async getAllTeam({commit}){
-    await axios.get('/api/team/get-all-team')
+    await axios.get('/api/team/get-all-team',{headers: { Authorization: 'Bearer ' + state.token}})
     .then(response =>
       { 
         commit('getAllTeam', response.data.data)
@@ -58,7 +60,8 @@ const actions = {
         url: 'api/team/edit',
         data: {
           id: id,
-        }
+        },
+        headers: { Authorization: 'Bearer ' + state.token}
       });
       let data = res.data;
       // console.log(data.message);

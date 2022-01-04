@@ -13,7 +13,14 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="avatar">
-          <img :src="path + auth.user.img" alt="avt" class="rounded-circle" width="150" height="150" >
+          <img :src="path + auth.user.img"
+            @error="
+              $event.target.src =
+                'https://i.stack.imgur.com/gMbrL.jpg'
+            "
+            alt="avt" class="rounded-circle" 
+            width="150" 
+            height="150" >
         </div>
         <div class="info">
           <router-link to="info" class="d-block link-none">{{auth.user.name}}</router-link>
@@ -100,17 +107,17 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <router-link class="nav-link" to="all-project">
+                <router-link class="nav-link" to="roles">
                   <i class="fas fa-project-diagram nav-icon"></i>
                   <p>Vai trò</p>
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" to="my-project">
+                <router-link class="nav-link" to="permissions">
                   <i class="fas fa-tasks nav-icon"></i>
                   <p>Phân quyền</p>
                 </router-link>
-              </li>
+              </li>    
             </ul>
           </li>
         </ul>
@@ -124,12 +131,23 @@
 
 <script>
 import { mapState } from "vuex";
+import checkPer from '../../mixin/checkPer';
+
 
 export default {
+  mixins:[checkPer],
   data(){
     return{
-        path: 'http://localhost:8080/storage/images/'
+        path: 'http://127.0.0.1:8080/storage/images/'
     }
+  },
+  // created(){
+  //   this.checkPer()
+  // },
+  methods:{
+    // checkPer(per){
+    //   this.mixinCheckPer(per)
+    // },
   },
   
   computed:{

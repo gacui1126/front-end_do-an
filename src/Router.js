@@ -8,13 +8,17 @@ import Info from './components/home/content/user_info/Info'
 import allProjectManager from './components/home/content/project/allProject/allProjectManager'
 import myProjectManager from './components/home/content/project/myProject/myProjectManager'
 import ProjectCV from './components/home/content/project/allProject/ProjectCV'
+import RoleManager from './components/home/content/roles/RoleManager'
+import Permission from './components/home/content/roles/Permission'
 
 export const routes = [
   { path: '/', component: Login , name: 'login'},
   // { path: '/register', component: Register , name: 'resgiter'},
   { path: '/home', component: Home , name: 'home', children: [
     {
-      path:'/user-manager', component: UserManager , name: 'usermanager'
+      path:'/user-manager',
+      component: UserManager , 
+      name: 'usermanager',
     },
     {
       path:'/team-manager', component: TeamManager , name: 'teammanager'
@@ -33,6 +37,12 @@ export const routes = [
     },
     {
       path:'/project-go', component: ProjectCV , name: 'projectCV', props: true
+    },
+    {
+      path:'/roles', component: RoleManager , name: 'roles', props: true
+    },
+    {
+      path:'/permissions', component: Permission , name: 'permissions', props: true
     },
   ]},
 ]

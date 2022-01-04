@@ -1,6 +1,8 @@
 import axios from 'axios';
 import moment from 'moment'
+import sweetalert from '../mixin/sweetalert'
 export default{
+  mixins:[sweetalert],
   data(){
     return{
       value: {
@@ -32,23 +34,31 @@ export default{
         teams: {},
         users: {}
       },
-      teamDetail: {}
+      teamDetail: {},
+      token: localStorage.getItem('token'),
+      // deadline: 0
     }
   },
   methods:{
     async mixinGetProject(page){
-      await axios.post(`/api/project/all?page=${page}&total=${this.total}`)
+      await axios.get(`/api/project/all-project?page=${page}&total=${this.total}`,{headers: { Authorization: 'Bearer ' + this.token}})
       .then(response =>
         {
           
           this.data = response.data.data;
           this.data.userCreate = response.data.userCreate
           this.pageInfo = response.data;
+          // this.deadline = data.dayDeadline;
           for(let i=0; i<this.data.data.length; i++){
             this.data.data[i].start_at = moment(String(response.data.data.data[i].start_at)).format('DD-MM-YYYY hh:mm:ss') 
             this.data.data[i].end_at = moment(String(response.data.data.data[i].end_at)).format('DD-MM-YYYY hh:mm:ss') 
           }
         })
+      .catch(err =>{
+        if(err.response.status == 403){
+          this.errorPermission()
+        }
+      })
     },
     async mixinCreateProject(url,value){
       this.isCreate = true;
@@ -56,15 +66,15 @@ export default{
         let res = await axios({
           method: 'post',
           url: url,
-          data: value
+          data: value,
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
           this.modalCreateProject = false
-          this.success(data.message)
           this.mixinGetProject(1);
 
-          // this.data.data.unshift(data.data)
+          this.successNotice(data.message)
           this.isCreate = false;
         }
       } catch (error) {
@@ -78,7 +88,8 @@ export default{
         let res = await axios({
           method: 'post',
           url: url,
-          data: value
+          data: value,
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -100,7 +111,8 @@ export default{
         let res = await axios({
           method: 'post',
           url: url,
-          data: value
+          data: value,
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -108,7 +120,7 @@ export default{
           this.mixinGetProject(1) //Call get dữ liệu phân trang
 
           this.modalEditProject = false
-          this.success(data.message)
+          this.successNotice(data.message)
           this.isUpdate = false;
         }
       } catch (error) {
@@ -124,15 +136,16 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
           // this.data.data.splice(this.index,1)
           this.mixinGetProject(1) //Call get dữ liệu phân trang
-
+          
           this.modalDeleteProject = false
-          this.success(data.message)
+          this.successNotice(data.message)
           this.isDelete = false;
         }
       } catch (error) {
@@ -148,7 +161,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -169,7 +183,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
