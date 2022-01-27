@@ -57,6 +57,7 @@ export default{
       .catch(err =>{
         if(err.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }
       })
     },

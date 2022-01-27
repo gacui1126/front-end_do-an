@@ -1,5 +1,6 @@
 <template>
   <div class="projectt-cv">
+
     <TaskDetail 
       :rOutOftime.sync="rOutOftime" 
       :outOftime.sync="outOftime" 
@@ -53,20 +54,7 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
           
           <li class="nav-item active mr-1">
-            <!-- <Button class="nav-link" >
-              <Dropdown trigger="click" style="margin-left: 20px">
-                <a href="javascript:void(0)">
-                    Chuyển dự án
-                    <Icon type="ios-arrow-down"></Icon>
-                </a>
-                <DropdownMenu slot="list">
-                    <DropdownItem @click="projectGO(project.id)" v-for="(project,i) in this.switchPro" :key="i">{{project.name}}</DropdownItem>
-
-                </DropdownMenu>
-              </Dropdown>
-            </Button> -->
-
-            <Poptip title="Chuyển dự án" placement="bottom">
+            <Poptip title="Chuyển dự án" placement="bottom" style="text-align: center">
               <Button>
                 Chuyển dự án
                 <Icon type="ios-arrow-down"></Icon>
@@ -75,6 +63,9 @@
                   <div @click="projectGO(project.id)" class="pro" v-for="(project,i) in this.switchPro" :key="i">
                     {{project.name}}
                   </div>
+                  <Button @click="switchProject()">Xem thêm
+                    <Icon type="ios-arrow-down"></Icon>
+                  </Button>
                 </div>
             </Poptip>
           </li>

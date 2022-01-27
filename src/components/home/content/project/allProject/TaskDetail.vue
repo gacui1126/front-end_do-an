@@ -49,11 +49,8 @@
                       <Tooltip :content="u.name" placement="bottom">
                         <img
                           class="img"
-                          :src="path + u.img"
-                          @error="
-                            $event.target.src =
-                              'https://i.stack.imgur.com/gMbrL.jpg'
-                          "
+                          :src="u.img ? u.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                          
                           alt="avt"
                           width="40"
                           height="40"
@@ -291,11 +288,8 @@
                         <img
                           class="img"
                           style="margin-right: 5px;object-fit: cover;"
-                          :src="path + c.user.img"
-                          @error="
-                            $event.target.src =
-                              'https://i.stack.imgur.com/gMbrL.jpg'
-                          "
+                          :src="c.user.img ? c.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                         
                           alt=""
                           width="30"
                           height="30"
@@ -336,11 +330,8 @@
                         <img
                           class="img"
                           style="margin-right: 5px;object-fit: cover;"
-                          :src="path + auth.user.img"
-                          @error="
-                            $event.target.src =
-                              'https://i.stack.imgur.com/gMbrL.jpg'
-                          "
+                          :src="auth.user.img ? auth.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                          
                           alt=""
                           width="33"
                           height="30"
@@ -365,11 +356,8 @@
                             <img
                               class="img"
                               style="margin-right: 5px;object-fit: cover;"
-                              :src="path + reply.user.img"
-                              @error="
-                                $event.target.src =
-                                  'https://i.stack.imgur.com/gMbrL.jpg'
-                              "
+                              :src="reply.user.img ? reply.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                              
                               alt=""
                               width="33"
                               height="30"
@@ -392,11 +380,8 @@
                             <img
                               class="img"
                               style="margin-right: 5px;object-fit: cover;"
-                              :src="path + reply.user.img"
-                              @error="
-                                $event.target.src =
-                                  'https://i.stack.imgur.com/gMbrL.jpg'
-                              "
+                              :src="reply.user.img ? reply.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                              
                               alt=""
                               width="33"
                               height="30"
@@ -643,7 +628,6 @@ export default {
       tagData: [],
       jobList: [],
       per: 0,
-      path: "http://127.0.0.1:8080/storage/images/",
     };
   },
   computed: {

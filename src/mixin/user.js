@@ -28,6 +28,7 @@ export default{
       .catch(err =>{
         if(err.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }
       })
     },
@@ -50,7 +51,11 @@ export default{
           this.mixinGetAllUser(1)
         }
       }catch (error) {
-        this.$toaster.error(error.response.data.message)
+        // this.$toaster.error(error.response.data.message)
+        if(error.response.status == 403){
+          this.errorPermission()
+          this.$router.push('/page-404')
+        }
         this.spinShow = false
       }
     },
@@ -73,6 +78,7 @@ export default{
       } catch (error) {
         if(error.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }
           // this.$swal(error.response.data.message)
       }
@@ -122,6 +128,7 @@ export default{
           // this.$toaster.error('Update lỗi')
           if(error.response.status == 403){
             this.errorPermission()
+            this.$router.push('/page-404')
           }
       }
     }

@@ -1,3 +1,5 @@
+// import swal from 'sweetalert2';
+import Vue from 'vue';
 export default {
   data(){
     return{
@@ -63,5 +65,25 @@ export default {
         // timerProgressBar: true,
       })
     },
+    chatNotication(img,name,message){
+      Vue.swal({
+        html:  
+        `   <div style="display:flex;">
+                <img src="${img ? img : 'https://i.stack.imgur.com/gMbrL.jpg'}" width="40" height="40"/>
+                <div style="text-align: left; margin-left: 10px">
+                    <strong>${name}</strong><br>
+                    ${message}
+                </div>
+            </div>
+        `,
+        showCloseButton: true,
+        showLoaderOnConfirm: true,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        })
+    }
   }
 }

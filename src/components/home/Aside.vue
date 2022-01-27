@@ -13,14 +13,13 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="avatar">
-          <img :src="path + auth.user.img"
-            @error="
-              $event.target.src =
-                'https://i.stack.imgur.com/gMbrL.jpg'
-            "
+          <router-link to="info">
+          <img :src="auth.user.img ? auth.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+            
             alt="avt" class="rounded-circle" 
             width="150" 
             height="150" >
+          </router-link>
         </div>
         <div class="info">
           <router-link to="info" class="d-block link-none">{{auth.user.name}}</router-link>
@@ -138,7 +137,6 @@ export default {
   mixins:[checkPer],
   data(){
     return{
-        path: 'http://127.0.0.1:8080/storage/images/'
     }
   },
   // created(){

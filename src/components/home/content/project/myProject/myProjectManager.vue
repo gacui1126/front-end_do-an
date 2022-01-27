@@ -2,7 +2,7 @@
   <div class="container table-responsive-sm">
     <pre>{{info.id}}</pre>
     <div class="title_user">
-      <h2>Dự án của tôi</h2>
+      <h2>Dự án tham gia</h2>
     </div>
 
     <div class="button_create">

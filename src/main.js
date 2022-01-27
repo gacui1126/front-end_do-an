@@ -23,6 +23,32 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import VueAutosizer from 'vue-autosizer'
 import 'vue-autosizer/dist/vue-autosizer.min.css'
 import VueElElements from 'vue-el-element'
+import vueSmoothScroll from 'vue-smooth-scroll'
+import VueChatScroll from 'vue-chat-scroll'
+Vue.use(VueChatScroll)
+
+import Echo from 'laravel-echo'
+
+window.Pusher = require('pusher-js')
+window.Laravel = {'csrfToken': '{{csrf_token()}}'}
+window.Echo = new Echo({
+  broadcaster: 'pusher',
+  key: 'local',
+  authEndpoint: 'http://localhost:8080/api/broadcasting/auth',
+  cluster: 'ap1',
+  wsHost: process.env.VUE_APP_WEBSOCKETS_SERVER,
+  wsPort: 6001,
+  forceTLS: false,
+  disableStats: true,
+  auth: {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  },
+})
+
+
+Vue.use(vueSmoothScroll)
  
 Vue.use(VueElElements)
  

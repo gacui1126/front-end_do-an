@@ -24,7 +24,10 @@ export default{
       getJob:[],
       getCommentTD:[],
       token: localStorage.getItem('token'),
-      switchPro: []
+      switchPro: [],
+      moreProFetched: false,
+      morePro: [],
+      oldPro:[]
     }
   },
   methods:{
@@ -449,19 +452,26 @@ export default{
       }
     },
     async mixinSwitchProject(url){
-      try {
-        let res = await axios({
-          method: 'get',
-          url: url,
-          headers: { Authorization: 'Bearer ' + this.token}
-          });
-        let data = res.data;
-        if(data){
-          this.switchPro = data.data
+      if(!this.moreProFetched){
+        try {
+          let res = await axios({
+            method: 'get',
+            url: url,
+            headers: { Authorization: 'Bearer ' + this.token}
+            });
+          let data = res.data;
+          if(data){
+            this.morePro = data.data
+            this.switchPro = this.morePro.splice(0,5)
+            this.moreProFetched = true;
+          }
+          } catch (error) {
+              this.error(error.response.data.message)
+          }
+        }else{
+          var nextPro = this.morePro.splice(0,5)
+            nextPro.forEach(element => this.switchPro.push(element))
         }
-      } catch (error) {
-          this.error(error.response.data.message)
       }
-    }
   }
 }

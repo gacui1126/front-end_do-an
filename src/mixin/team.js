@@ -19,6 +19,7 @@ export default{
       .catch(err =>{
         if(err.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }
       })
     },
@@ -40,6 +41,7 @@ export default{
       } catch (error) {
         if(error.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }else{
           this.errorNotice(error.response.data.message)
         }
@@ -64,6 +66,7 @@ export default{
       } catch (error) {
         if(error.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }else{
           this.errorNotice(error.response.data.message)
         }
@@ -87,6 +90,7 @@ export default{
       } catch (error) {
         if(error.response.status == 403){
           this.errorPermission()
+          this.$router.push('/page-404')
         }else{
           this.errorNotice(error.response.data.message)
         }

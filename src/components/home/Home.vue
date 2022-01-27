@@ -6,6 +6,7 @@
     <router-view></router-view>
   </div>
     <Footer />
+    <PopupMess />
 
 </div>
 
@@ -15,6 +16,7 @@
 import Aside from './Aside';
 import Footer from './Footer.vue';
 import Header from './Header.vue';
+import PopupMess from './PopupMess';
 
 export default {
   data(){
@@ -22,7 +24,7 @@ export default {
       
     }
   },
-  components: { Header, Aside, Footer},
+  components: { Header, Aside, Footer,PopupMess},
   // created(){
   //   this.checkPer()
   // },
@@ -33,7 +35,6 @@ export default {
 </script>
 
 <style>
-
   .sidebar-dark-teal{
     background-color: rgb(72, 121, 117);
   }

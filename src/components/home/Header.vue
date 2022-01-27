@@ -6,21 +6,12 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-      <!-- <li class="nav-item d-none d-sm-inline-block">
-        <a href="" class="nav-link">Home</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
-      </li> -->
     </ul>
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
       <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
         <div class="navbar-search-block">
           <form class="form-inline">
             <div class="input-group input-group-sm">
@@ -40,66 +31,46 @@
 
       <!-- Messages Dropdown Menu -->
       <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comment"></i>
-          <!-- <span class="badge badge-danger navbar-badge">3</span> -->
+        <a  @click="message.allMessUnread = 0" class="notification nav-link" data-toggle="dropdown">
+          <i class="far fa-comments" style="font-size: 20px">
+            <span class="badge" v-if="message.allMessUnread">
+              <p>{{message.allMessUnread > 5 ? '5+' : message.allMessUnread }}</p>
+            </span>
+          </i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
+          <div style="max-height: 500px;overflow-x: hidden; overflow-y: scroll">
+            <div style="margin-bottom:1px" v-for="mess in sortedMess" :key="mess.id">
+              <a v-if="mess.id !== auth.user.id" @click="openForm(mess)" :style="`${mess.unread ? 'background: #efefef;' : ''}`" class="dropdown-item">
+                <div class="media">
+                  <img :src="mess.img ? mess.img : 'https://i.stack.imgur.com/gMbrL.jpg'" style="width:50px; height: 50px" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                  <div class="media-body">
+                    <h3 class="dropdown-item-title">
+                      {{mess.name}}
+                    </h3>
+                    <span style="text-align:center; width: 20px;background: rgb(202, 127, 117);border-radius:3px; padding: 0 3px;" v-if="mess.unread" class="float-right text-sm text-white">
+                      {{mess.unread > 5 ? '5+' : mess.unread}}
+                    </span>
+                    <p class="text-sm">{{mess.message_re[mess.message_re.length - 1].message}}</p>
+                    <p class="text-sm text-muted">
+                      <i class="fa fa-circle" :class="`${onlineUser.find(online=>online.id === mess.id)  ? 'online' : 'offline'}`"></i>
+                        {{onlineUser.find(online=>online.id === mess.id)  ? 'Online' : 'Offline'}}
+                    </p>
+                  </div>
+                </div>
+              </a>
             </div>
-            <!-- Message End -->
-          </a>
+          </div>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+          <router-link to="/chat-home" style="text-align: center;">
+            <div href="#" class="footer-drop">Xem tất cả tin nhắn</div>
+          </router-link>
         </div>
       </li>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
+          <i class="far fa-bell" style="font-size: 20px"></i>
           <!-- <span class="badge badge-warning navbar-badge">15</span> -->
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -125,12 +96,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-          <i class="fas fa-expand-arrows-alt"></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
+          <i class="fas fa-expand-arrows-alt" style="font-size: 20px"></i>
         </a>
       </li>
       <li class="nav-item">
@@ -145,25 +111,101 @@
 </template>
 
 <script>
-// const axios = require('axios');
 import { mapActions, mapState } from "vuex";
+import _ from 'lodash';
+
 export default {
+  data(){
+    return{
+      // messages:[],
+      token: localStorage.getItem('token'),
+      selected: 0,
+      onlineUser: []
+    }
+  },
   computed: {
-    ...mapState(['auth']),
-    
+    ...mapState(['auth','message']),
+    sortedMess(){
+      return _.sortBy(this.$store.state.message.messages,[(user)=>{
+          if(user == this.selected){
+            return Infinity;
+          }
+          return user.unread
+      }]).reverse()
+    }
   },
   created(){
     this.checkLogin();
+    this.getMess();
+
+    window.Echo.join(`joinChat`)
+    .here((users) => {
+        this.onlineUser = users;
+    })
+    .joining((user) => {
+        this.onlineUser.push(user);
+    })
+    .leaving((user) => {
+        this.onlineUser.splice(this.onlineUser.indexOf(user),1)
+    })
+    .error((error) => {
+        window.console.error(error);
+    });
   },
   methods:{
     ...mapActions(['logout']),
     checkLogin(){
       this.$store.dispatch('checkLogin')
+    },
+    openForm(user){
+      this.$store.dispatch('selectMess',user)
+    },
+    getMess(){
+      this.$store.dispatch('getMess');
     }
   },
 }
 </script>
 
 <style scoped>
+#c{
+  color: rgb(75, 73, 80);
+}
+.footer-drop{
+  font-size: 15px;
+  color: black;
+  padding: 3px 0;
+}
+.footer-drop:hover{
+  background: rgb(201, 201, 201);
+}
+.dropdown-item:hover{
+  background: #efefef;
+}
+.notification {
+  position: relative;
+  display: inline-block;
+}
 
+.notification .badge {
+  position: absolute;
+  top: 0;
+  right: -5px;
+  padding: 5px 10px;
+  width: 15px;
+  height: 20px;
+  font-size: 10px;
+  border-radius: 3px;
+  background: red;
+  color: white;
+  display: flex;
+  justify-content: center;
+}
+.online {
+    color: #86c541
+}
+
+.offline {
+    color: #e47297
+}
 </style>

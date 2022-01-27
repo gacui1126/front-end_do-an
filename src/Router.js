@@ -10,6 +10,9 @@ import myProjectManager from './components/home/content/project/myProject/myProj
 import ProjectCV from './components/home/content/project/allProject/ProjectCV'
 import RoleManager from './components/home/content/roles/RoleManager'
 import Permission from './components/home/content/roles/Permission'
+import ChatHome from './components/home/content/messages/ChatHome.vue'
+import Page404 from './components/Page404'
+// import message from './components/home/content/messages/message'
 
 export const routes = [
   { path: '/', component: Login , name: 'login'},
@@ -44,5 +47,15 @@ export const routes = [
     {
       path:'/permissions', component: Permission , name: 'permissions', props: true
     },
+    
   ]},
+  {
+    path:'/chat-home', component: ChatHome , name: 'chat-home', props: true
+  },
+  {
+    path:'/page-404', component: Page404 , name: 'page404', props: true
+  },
+  // {
+  //   path:'/chat-home', component: message , name: 'message', props: true
+  // },
 ]

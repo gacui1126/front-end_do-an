@@ -13,11 +13,8 @@
                 <div class="card-body">
                   <div class="d-flex flex-column align-items-center text-center">
                     <div class="avatar">
-                      <img :src="path + auth.user.img"
-                          @error="
-                            $event.target.src =
-                              'https://i.stack.imgur.com/gMbrL.jpg'
-                          "
+                      <img :src="auth.user.img ? auth.user.img : 'https://i.stack.imgur.com/gMbrL.jpg'"
+                          
                             alt="avt" 
                             class="rounded-circle" 
                             width="150" height="150" >
@@ -159,7 +156,6 @@ import UpdateImage from './updateImage.vue'
 export default {
   data() {
     return{
-      path: 'http://127.0.0.1:8080/storage/images/',
       modal1: false,
       data:[]
     }

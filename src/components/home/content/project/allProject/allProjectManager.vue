@@ -144,7 +144,7 @@
     </Modal>
 
     <!-- DELETE -->
-    <Modal v-model="modalDeleteProject" width="360">
+    <!-- <Modal v-model="modalDeleteProject" width="360">
         <p slot="header" style="color:#f60;text-align:center">
             <Icon type="ios-information-circle"></Icon>
             <span>Bạn muốn xoá dữ liệu này???</span>
@@ -156,7 +156,7 @@
         <div slot="footer">
             <Button @click="deleteProject(idDelete)" type="error" size="large" long :disabled="isDelete" :loading="isDelete">{{isDelete ? 'Đang xoá ... ' : 'Xoá'}}</Button>
         </div>
-    </Modal>
+    </Modal> -->
     
     <!-- INFO -->
     <Modal
@@ -296,10 +296,15 @@
             <td>{{projects.name}}</td>
             <td>{{projects.start_at}}</td>
             <td>{{projects.end_at}}</td>
-            <td>{{projects.deadline}} Ngày</td>
+            <td v-if="projects.deadline != 0" >{{projects.deadline}} Ngày</td>
+            <td v-if="projects.deadline == 0" >
+              <span class="end-project">
+                Kết thúc
+              </span>
+            </td>
             <td>
               <Button @click="editProject(projects.id, i)" type="primary" size="small">Sửa</Button> |
-              <Button @click="deleteProjectModal(projects.id, i)" type="error" size="small">Xoá</Button> |
+              <Button @click="deleteProject(projects.id, i)" type="error" size="small">Xoá</Button> |
               <Button @click="infoProjectModal(projects.id)" type="info" size="small" data-toggle="modal" data-target="#infoProjectModal">Xem thông tin</Button> |
               <Button @click="projectCV(projects.id)"
                       type="warning" size="small" 
@@ -329,10 +334,11 @@
 import { mapState } from 'vuex'
 import common from '../../../../../mixin/common';
 import project from '../../../../../mixin/project';
-import Multiselect from 'vue-multiselect'
+import Multiselect from 'vue-multiselect';
+import sweetalert from "../../../../../mixin/sweetalert";
 
 export default {
-  mixins: [common,project],
+  mixins: [common,project,sweetalert],
   components: {
     Multiselect
   },
@@ -387,8 +393,10 @@ export default {
       this.idDelete = id
       this.index = index
     },
-    deleteProject(id){
-      this.mixinDeleteProject('api/project/delete', id)
+    deleteProject(id,index){
+      // this.mixinDeleteProject('api/project/delete', id)
+      this.swdelete(this.mixinDeleteProject, "api/project/delete", id);
+      this.index = index
     },
     infoProjectModal(id){
       this.mixinInfoProject('api/project/info', id)
@@ -434,5 +442,12 @@ export default {
   }
   .button{
     margin-left: 10px;
+  }
+  .end-project{
+    border-radius: 5px;
+    background: rgb(199, 89, 89);
+    padding: 3px 5px;
+    color: white;
+    font-size: 14px;
   }
 </style>
