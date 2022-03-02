@@ -1,9 +1,6 @@
 <template>
-  <div class="info">
-
-    <edit-info />
-    <update-image />
-    <reset-pass />
+  <div class="info-friend">
+    <div class="info">
     <div style="text-align:center; padding-top:30px; margin-bottom: -67px;">
       <H2>Thông tin cá nhân</H2>
     </div>
@@ -136,108 +133,15 @@
         </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import editInfo from './editInfo.vue'
-import ResetPass from './ResetPass.vue'
-import UpdateImage from './updateImage.vue'
-
 export default {
-  data() {
-    return{
-      modal1: false,
-      data:[]
-    }
-  },
-  components: { editInfo, UpdateImage, ResetPass },
-  computed:{
-    ...mapState(['auth'])
-  },
-  mounted(){
-    this.checkLogin()
-    this.getMyProject()
-  },
-  methods:{
-    progessPro(countComplete,countTaskDetail){
-      let progess = 0;
-      if(countTaskDetail){
-        progess = (countComplete/countTaskDetail)*100
-        return `width:${progess}%;`
-      }else{
-        return 'width: 0'
-      }
-    },
-    checkLogin(){
-      this.$store.dispatch('checkLogin')
-    },
-    editInfo(id){
-      this.$store.dispatch('editInfo', id)
-    },
-    getMyProject(){
-      this.$store.dispatch('getMyProject')
-    }
-  }
+  
 }
 </script>
 
 <style scoped>
-  .edit-img{
-    cursor: pointer;
-  }
-  .card {
-      box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
-  }
 
-  .card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      word-wrap: break-word;
-      background-color: #fff;
-      background-clip: border-box;
-      border: 0 solid rgba(0,0,0,.125);
-      border-radius: .25rem;
-  }
-
-  .card-body {
-      flex: 1 1 auto;
-      min-height: 1px;
-      padding: 1rem;
-  }
-
-  .mb-3, .my-3 {
-      margin-bottom: 1rem!important;
-  }
-
-  .bg-gray-300 {
-      background-color: #e2e8f0;
-  }
-  .h-100 {
-      height: 100%!important;
-  }
-  .shadow-none {
-      box-shadow: none!important;
-  }
-  .rounded-circle{
-    object-fit: cover;
-    border: 1px solid rgb(169, 175, 147);
-    box-shadow: 1px 1px .5px #817c7c;
-  }
-  .avatar{
-    display: flex;
-    position: relative;
-  }
-  .edit-avatar{
-    position: absolute;
-    bottom: 0;
-  }
-  .row{
-    padding: 10px;
-  }
-  h4{
-    padding: 10px;
-  }
 </style>

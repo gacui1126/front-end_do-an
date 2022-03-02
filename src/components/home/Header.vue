@@ -38,7 +38,12 @@
             </span>
           </i>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right bf">
+          <div class="header-noti" style="text-align:center;padding-bottom:10px;border-bottom: 1px solid #eee;">
+            <strong>
+              <span>Tin nhắn</span>
+            </strong>
+          </div>
           <div style="max-height: 500px;overflow-x: hidden; overflow-y: scroll">
             <div style="margin-bottom:1px" v-for="mess in sortedMess" :key="mess.id">
               <a v-if="mess.id !== auth.user.id" @click="openForm(mess)" :style="`${mess.unread ? 'background: #efefef;' : ''}`" class="dropdown-item">
@@ -69,28 +74,35 @@
       </li>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell" style="font-size: 20px"></i>
-          <!-- <span class="badge badge-warning navbar-badge">15</span> -->
+        <a @click="selectNoti" class="notification nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell" style="font-size: 20px">
+            <span class="badge" v-if="message.countUnReadNoti">
+              <p>{{message.countUnReadNoti > 5 ? '5+' : message.countUnReadNoti }}</p>
+            </span>
+          </i>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-header">15 Notifications</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right bf-noti" style="width:400px">
+          <div class="header-noti" style="text-align:center;padding-bottom:10px;border-bottom: 1px solid #eee;">
+            <strong>
+              <span>Thông báo</span>
+            </strong>
+          </div>
+          <div style="max-height: 500px;overflow-x: hidden; overflow-y: scroll">
+            <router-link to="/my-word">
+              <div 
+                
+                :style="`${noti.read == 0 ? 'background: #efefef;' : ''}`"
+                style="margin-bottom: 3px"
+                class="notifications-item"
+                  v-for="noti in message.notications" :key="noti.id"> 
+                <img src="https://mndaily.com/wp-content/uploads/2019/06/graphics_6.25.19-letterstotheeditor-CMYK-01-900x900.jpeg" alt="img">
+                <div class="text" style="display:flex;flex-direction:column;justify-content:center">
+                  <p style="color:black">{{noti.content}}</p>
+                </div>
+              </div>
+            </router-link>
+          </div>
+          
           <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
       </li>
@@ -137,6 +149,7 @@ export default {
   created(){
     this.checkLogin();
     this.getMess();
+    this.getNoti();
 
     window.Echo.join(`joinChat`)
     .here((users) => {
@@ -162,6 +175,12 @@ export default {
     },
     getMess(){
       this.$store.dispatch('getMess');
+    },
+    getNoti(){
+      this.$store.dispatch('getNoti');
+    },
+    selectNoti(){
+      this.$store.dispatch('selectNoti')
     }
   },
 }
@@ -201,11 +220,121 @@ export default {
   display: flex;
   justify-content: center;
 }
+.dropdown-item{
+  border-bottom: 1px solid #eee;
+}
 .online {
     color: #86c541
 }
+.bf::before{
+  content: '';
+  border-width: 20px 20px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+  position: absolute;
+  top: -5%;
+	right: 0;
+  display: block;
+}
 
+.bf-noti::before{
+  content: '';
+  border-width: 20px 15px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+  position: absolute;
+  top: -6%;
+	right: 0%;
+  display: block;
+}
 .offline {
     color: #e47297
+}
+.icon {
+    cursor: pointer;
+    margin-right: 50px;
+    line-height: 60px
+}
+
+.icon span {
+    background: #f00;
+    padding: 7px;
+    border-radius: 50%;
+    color: #fff;
+    vertical-align: top;
+    margin-left: -25px
+}
+
+.icon img {
+    display: inline-block;
+    width: 26px;
+    margin-top: 4px
+}
+
+.icon:hover {
+    opacity: .7
+}
+
+.logo {
+    flex: 1;
+    margin-left: 50px;
+    color: #eee;
+    font-size: 20px;
+    font-family: monospace
+}
+
+.notifications {
+    width: 300px;
+    height: 0px;
+    opacity: 0;
+    position: absolute;
+    top: 63px;
+    right: 62px;
+    border-radius: 5px 0px 5px 5px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+}
+
+.notifications h2 {
+    font-size: 14px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    color: #999
+}
+
+.notifications h2 span {
+    color: #f00
+}
+
+.notifications-item {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    padding: 6px 9px;
+    margin-bottom: 0px;
+    cursor: pointer
+}
+
+.notifications-item:hover {
+    background-color: #eee
+}
+
+.notifications-item img {
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin-right: 9px;
+    border-radius: 50%;
+    margin-top: 2px
+}
+
+.notifications-item .text h4 {
+    color: #777;
+    font-size: 16px;
+    margin-top: 3px
+}
+
+.notifications-item .text p {
+    color: #aaa;
+    font-size: 12px
 }
 </style>

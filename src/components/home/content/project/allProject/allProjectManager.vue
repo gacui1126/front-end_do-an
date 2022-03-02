@@ -7,7 +7,16 @@
     <div class="button">
       <Button type="success" @click="modalCreateProject = true"><Icon type="ios-add-circle-outline" /> Tạo dự án</Button>
     </div>
-
+    <!-- <div class="form-inline">
+      <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-sidebar">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+        </div>
+      </div>
+    </div> -->
     <Modal
         v-model="modalCreateProject"
         title="Tạo dự án"
@@ -287,6 +296,7 @@
           <th scope="col">Bắt đầu</th>
           <th scope="col">Kết thúc</th>
           <th scope="col">Thời hạn</th>
+          <th scope="col">Tiến độ</th>
           <th scope="col">Hành động</th>
         </tr>
       </thead>
@@ -301,6 +311,11 @@
               <span class="end-project">
                 Kết thúc
               </span>
+            </td>
+            <td>
+                <span style="background:rgb(115, 199, 89);padding:2px 5px;border-radius:5px;color:#fff">
+                  {{percentProject(projects.countComplete,projects.countTaskDetail)}}%
+                </span>
             </td>
             <td>
               <Button @click="editProject(projects.id, i)" type="primary" size="small">Sửa</Button> |
@@ -359,6 +374,14 @@ export default {
   },
 
   methods:{
+    percentProject(taskComplete,taskCount){
+      let per =  taskComplete/taskCount;
+      if(taskComplete == 0){
+        return 0
+      }else{
+        return per*100
+      }
+    },
     checkLogin(){
       this.$store.dispatch('checkLogin')
     },

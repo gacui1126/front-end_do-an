@@ -10,6 +10,8 @@ const state = {
   userConnect: [],
   messages: [],
   allMessUnread: 0,
+  notications: [],
+  countUnReadNoti: 0,
 }
 const getters = {
   
@@ -56,6 +58,13 @@ const actions = {
         .listenForWhisper('typing',(e)=>{
             this.typingFriend = e.user;
             // window.console.log('dang nhap')
+        })
+
+        window.Echo.private(`notication.${state.userConnect.id}`)
+        .listen('NoticationEvent', (e)=>{
+          state.notications.unshift(e.notication);
+          state.countUnReadNoti++;
+            // window.console.log(e)
         })
     })
   },
@@ -116,6 +125,38 @@ const actions = {
         // window.console.log(state.allMessUnread)
         commit('messages',response.data);
       })
+  },
+  async getNoti({commit}){
+    try {
+      let res = await axios({
+        method: 'post',
+        url: 'api/notications/get-noti',
+        headers: { Authorization: 'Bearer ' + state.token}
+        });
+      let data = res.data;
+      if(data){
+        commit('notications', data.data.reverse());
+        commit('countUnReadNoti', data.countNoti);
+      }
+    } catch (error) {
+      commit('error', error.data)
+    }
+  },
+  async selectNoti({commit}){
+    state.countUnReadNoti = 0;
+    try {
+      let res = await axios({
+        method: 'post',
+        url: 'api/notications/select-noti',
+        headers: { Authorization: 'Bearer ' + state.token}
+        });
+      let data = res.data;
+      if(data){
+        data
+      }
+    } catch (error) {
+      commit('error', error.data)
+    }
   }
 }
 const mutations = {
@@ -133,6 +174,12 @@ const mutations = {
   },
   allMessUnread(state,data){
     state.allMessUnread = data
+  },
+  notications(state,data){
+    state.notications = data
+  },
+  countUnReadNoti(state,data){
+    state.countUnReadNoti = data
   }
 }
 

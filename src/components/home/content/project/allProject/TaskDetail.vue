@@ -190,17 +190,17 @@
                     Ngày hết hạn
                   </span>
                   <div class="deadline">
-                    <div @click="completedTD(!checkDateTD)" class="deadline-check">
+                    <!-- <div @click="completedTD(!checkDateTD)" class="deadline-check">
                       <Checkbox v-model="checkDateTD"></Checkbox>
-                    </div>
+                    </div> -->
                     <div class="deadline-time">
                       
                       <div class="date-t" style="border:1px solid rgb(204,204,204);border-radius:3px;padding: 5px 10px;">
                         {{deadlineP}}
                       </div>
-                      <div class="date" v-if="checkDateTD">Đã hoàn thành</div>
-                      <div class="end" v-if="outOftime">Hết hạn</div>
-                      <div class="s-end" v-if="rOutOftime">Gần hết hạn</div>
+                      <div :class="checkCom(checkDateTD,outOftime,rOutOftime)">
+                        {{checkD(checkDateTD,outOftime,rOutOftime)}}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -248,7 +248,7 @@
                           </div>
 
                           <div class="btn-add-right">
-                            <div class="select-user padding">
+                            <!-- <div class="select-user padding">
                               <Icon type="md-person-add" class="icon-user" />
                               <span>Chỉ định</span>
                             </div>
@@ -258,7 +258,7 @@
                                 class="icon-user"
                               />
                               <span>Ngày hết hạn</span>
-                            </div>
+                            </div> -->
                           </div>
                         </div>
                       </div>
@@ -269,6 +269,68 @@
                       >
                         Thêm một việc
                       </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="
+                      FileInCard !== undefined && FileInCard.length > 0
+                    " class="file">
+                  <div class="mb" style="padding-top:10px">
+                    <i class="fas fa-paperclip"></i>
+                    <strong>
+                      Các tập tin đính kèm
+                    </strong>
+                  </div>
+                  <div class="file-download" v-for="(file,i) in FileInCard" :key="i">
+
+                    <div class="file-name">
+                      <span style="font-weight: 600">
+                        {{file.name}} 
+                      </span>
+                    </div>
+
+                    <div class="file-auth-name" style="font-size: 13px">
+                      {{file.auth_name}}
+                    </div>
+                    <div class="file-setting">
+                      <div @click="downloadFile(file.id,file.name)" >
+                        <a class="down setting mr-1">Tải về</a>
+                        -
+                      </div>
+                      <div>
+                        <Poptip
+                          title="Title"
+                          content="content"
+                          placement="bottom"
+                        >
+                          <a class="update-file setting mr-1 ml-1">Chỉnh sửa</a>
+                          <div slot="title" style="text-align: center">
+                            <i>
+                              Chỉnh sửa
+                            </i>
+                          </div>
+                          <div slot="content">
+                            <form @submit.prevent="ChangeFile(file.id,file.name,i)" class="fileUpload" @change="onChange">
+                              <input type="file" name="file" id="file" class="inputfile" hidden/>
+                              <div class="file-content">
+                                <Input v-model="file.name" style="margin-bottom: 5px" type="text" placeholder="Tên tài liệu ..."/>
+                                <label 
+                                  style="text-align:center;padding: 5px 10px; border-radius:3px;background:rgb(175, 168, 133);cursor:pointer" 
+                                  for="file">Chọn tệp</label>
+                                <span class="file-name-choose">
+                                  {{file.auth_name}}
+                                </span>
+                                <button class="btn btn-warning" type="submit">Thay đổi</button>
+                              </div>
+                            </form>
+                          </div>
+                        </Poptip>
+                        - 
+                      </div>
+                      <div>
+                        <a @click="deleteFile(file.id,i)" class="update-file setting ml-1">Xoá</a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -409,7 +471,7 @@
               <div class="content-right ml-2">
                 <span class="content-right-header">Thêm vào thẻ</span>
                 <div class="bt-clear">
-                  <Poptip class="button-link" width="400" placement="bottom">
+                  <Poptip class="button-link" width="500" placement="bottom">
                     <a>
                       <i class="far fa-user icon"></i>
                       <span>Thành viên</span>
@@ -421,20 +483,22 @@
                     </div>
                     <div slot="content" style="height: 200px">
                       <!-- <small>Thành viên của bảng</small> -->
-                      <multiselect
-                        class="mul-se"
-                        v-model="user"
-                        :options="usersOfP"
-                        :multiple="true"
-                        :close-on-select="false"
-                        :clear-on-select="false"
-                        :preserve-search="true"
-                        placeholder="Thêm thành viên"
-                        label="email"
-                        track-by="id"
-                        :preselect-first="true"
-                      >
-                      </multiselect>
+                      <div class="form-group">
+                        <multiselect
+                          class="mul-se"
+                          v-model="user"
+                          :options="usersOfP"
+                          :multiple="true"
+                          :close-on-select="false"
+                          :clear-on-select="false"
+                          :preserve-search="true"
+                          placeholder="Thêm thành viên"
+                          label="email"
+                          track-by="id"
+                          :preselect-first="true"
+                        >
+                        </multiselect>
+                      </div>
 
                       <button @click="addTaskUser()" class="btn btn-info ml-1">
                         Thêm
@@ -526,7 +590,7 @@
                     <div @click.prevent="modalDate =! modalDate" class="button-link">
                       <a>
                         <i class="far fa-clock icon"></i>
-                        <span>Thời gian</span>
+                        <span>Chỉnh sửa deadline</span>
                       </a>
                     </div>
                     <div v-if="modalDate" class="date-picker" style="text-align:center">
@@ -537,11 +601,11 @@
                         format="DD-MM-YYYY hh:mm a"
                       />
                       <div class="save-date">
-                        <button @click="setDeadLine()" type="button" class="btn btn-primary" style="width:100%">Lưu</button>
+                        <button @click="setDeadLine(deadline)" type="button" class="btn btn-primary" style="width:100%">Lưu</button>
                       </div>
-                      <div class="de-date">
+                      <!-- <div class="de-date">
                         <button @click="deleteDeadline()" width="100%" class="btn btn-danger" style="width:100%">Gở bỏ</button>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
 
@@ -570,6 +634,66 @@
                       >
                     </div>
                   </Poptip>
+
+                  <Poptip
+                    class="button-link"
+                    title="Title"
+                    content="content"
+                    placement="bottom"
+                  >
+                    <a>
+                      <i class="fas fa-paperclip icon"></i>
+                      <span>Đính kèm tệp</span>
+                    </a>
+                    <div slot="title" style="text-align: center">
+                      <i>
+                        Đính kèm
+                      </i>
+                    </div>
+                    <div slot="content">
+                      <form @submit.prevent="formSubmit" class="fileUpload" @change="onChange">
+                        <input type="file" name="file" id="file" class="inputfile" hidden/>
+                        <div class="file-content">
+                          <Input v-model="NameFile" style="margin-bottom: 5px" type="text" placeholder="Tên tài liệu ..."/>
+                          <label 
+                            style="text-align:center;padding: 5px 10px; border-radius:3px;background:rgb(175, 168, 133);cursor:pointer" 
+                            for="file">Chọn tệp</label>
+                          <span class="file-name-choose"></span>
+                          <button class="btn btn-warning" type="submit">Ghim</button>
+                        </div>
+                      </form>
+                    </div>
+                  </Poptip>
+
+                  <div @click="completeConfirmation()" class="button-link">
+                    <a>
+                      <i class="far fa-check-square icon"></i>
+                      <span>Xác nhận hoàn thành</span>
+                    </a>
+                  </div>
+
+                  <Poptip
+                    class="button-link"
+                    title="Title"
+                    content="content"
+                    placement="bottom"
+                  >
+                    <a @click="getHistoryChange()">
+                      <i class="fas fa-history icon"></i>
+                      <span>Lịch sử</span>
+                    </a>
+                    <div slot="title" style="text-align: center">
+                      <i>
+                        Lịch sử chỉnh sửa
+                      </i>
+                    </div>
+                    <div slot="content" class="content-history-change">
+                      <div class="his-content" v-for="history in historyChange" :key="history.id">
+                        <p><strong>{{history.user_change.name}}</strong> {{history.content}}</p>
+                        <p style="font-weight:500">Lúc : {{history.created_at | moment}}</p>
+                      </div>
+                    </div>
+                  </Poptip>
                 </div>
               </div>
             </div>
@@ -582,15 +706,18 @@
         </div>
       </div>
     </div>
+    <!-- <pre>{{getJob}}</pre> -->
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import taskDetail from "../../../../../mixin/taskDetail";
 import { mapState } from "vuex";
 import Multiselect from "vue-multiselect";
 import message from "../../../../../mixin/message";
 import sweetalert from "../../../../../mixin/sweetalert";
+import axios from 'axios'
 export default {
   props: [
     "taskCard",
@@ -603,10 +730,12 @@ export default {
     "checkDateTD",
     "getJob",
     "getCommentTD",
+    "FileInCard",
+    "taskCardId"
   ],
   mixins: [taskDetail, message, sweetalert],
   components: {
-    Multiselect,
+    Multiselect
   },
   data() {
     return {
@@ -628,15 +757,78 @@ export default {
       tagData: [],
       jobList: [],
       per: 0,
+      file: '',
+      NameFile:'',
+      cardId: window.sessionStorage.getItem('taskDetail')
     };
   },
   computed: {
     ...mapState(["project","auth"]),
   },
+  
   created() {
 
   },
+  mounted(){
+    // this.channelTask()
+  },
+  filters: {
+    moment: function (date) {
+      return moment(date).format('DD/MM/YYYY hh:mm:ss a');
+    }
+  },
   methods: {
+    
+    getAllDt(){
+      this.mixinGetAllDt()
+    },
+    checkCom(checkDateTD,outOftime,rOutOftime){
+      if(checkDateTD){
+        return 'date'
+      }
+      if(outOftime){
+        return 'end'
+      }
+      if(rOutOftime){
+        return 's-end'
+      }
+    },
+    checkD(checkDateTD,outOftime,rOutOftime){
+      if(checkDateTD){
+        return 'Đã hoàn thành'
+      }
+      if(outOftime){
+        return 'Hết hạn'
+      }
+      if(rOutOftime){
+        return 'Sắp hết hạn'
+      }
+    },
+    onChange(e) {
+      this.file = e.target.files[0];
+      document.querySelector('.file-name-choose').innerHTML = 
+      ` <p>Tên file : ${this.file.name}</p>
+      `
+    },
+    async formSubmit(e) {
+      this.mixinFormSubmit('api/file/upload',e)
+    },
+    downloadFile(id,name) {
+      axios.get('api/file/download/'+id, {responseType: 'arraybuffer'})
+        .then(response => {
+          let blob = new Blob([response.data], { type: 'application/pdf' })
+          let link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = name
+          link.click()
+        })
+    },
+    getTagTask(){
+      this.mixinGetTagTask()
+    },
+    ChangeFile(id,name,i){
+      this.mixinChangeFile('api/file/update',id,name,i)
+    },
     getTagUser(userId){
       this.mixinGetTagUser('api/tag/get-tag-user',userId)
     },
@@ -689,8 +881,8 @@ export default {
     updateTag(color,id,index){
       this.mixinUpdateTag('api/tag/update',color,id,index)
     },
-    setDeadLine(){
-      this.mixinSetDeadLine('api/task-detail/deadline/set')
+    setDeadLine(deadline){
+      this.mixinSetDeadLine('api/task-detail/deadline/set',deadline)
     },
     deleteDeadline(){
       this.mixinDeleteDeadline('api/task-detail/deadline/delete')
@@ -730,12 +922,38 @@ export default {
     },
     UpdateReCo(comment,id,i,index){
       this.mixinUpdateReCo('api/comment/reply/update',comment,id,i,index)
+    },
+    deleteFile(id,i){
+      this.indexDeleteFile = i;
+      this.swdelete(this.mixinDeleteFile,'api/file/delete',id,i)
+    },
+    completeConfirmation(){
+      this.swNoti(this.mixinCompledteConfi,'api/task-detail/complete-confirmation')
+      // this.mixinCompledteConfi('api/task-detail/complete-confirmation')
+    },
+    getHistoryChange(){
+      this.mixinGetHistoryChange('api/task-detail/history-change');
     }
-  },
+  }
 };
 </script>
 
 <style scoped>
+.his-content{
+  padding: 5px 5px;
+  background: rgb(231, 231, 231);
+  margin-bottom: 2px;
+}
+.content-history-change{
+  max-width: 500px;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.file-content{
+  display: flex;
+  flex-direction: column;
+}
 .text-line{
   text-decoration-line: line-through;
   color: #929292;
@@ -1054,4 +1272,32 @@ export default {
 .icon-del:hover {
   color: #000;
 }
+
+.file-download{
+  padding: 10px 20px;
+  border: .1px solid rgba(122, 122, 122, 0.616);
+  border-radius: 3px;
+  margin-bottom: 10px;
+  width: 540px;
+  
+}
+.setting:hover{
+  color: #888;
+  text-decoration-line: underline;
+}
+.file-name{
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-auth-name{
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-setting{
+  color: black;
+  font-size: 12px;
+  display: flex;
+}
+
 </style>

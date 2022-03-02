@@ -6,6 +6,7 @@ import createUser from './modules/createUser';
 import teamManager from './modules/teamManager';
 import project from './modules/project';
 import message from './modules/message';
+import myWork from './modules/myWork';
 
 // Load Vuex
 Vue.use(Vuex);
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     createUser,
     teamManager,
     project,
-    message
+    message,
+    myWork,
   },
 });

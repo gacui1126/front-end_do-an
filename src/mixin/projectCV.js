@@ -21,13 +21,14 @@ export default{
       outOftime: false,
       checkDateTD: false,
       rOutOftime: false,
-      getJob:[],
+      
       getCommentTD:[],
       token: localStorage.getItem('token'),
       switchPro: [],
       moreProFetched: false,
       morePro: [],
-      oldPro:[]
+      oldPro:[],
+      FileInCard:[]
     }
   },
   methods:{
@@ -64,6 +65,11 @@ export default{
         if(data){
           this.teamsOfP = data.teams
           this.usersOfP = data.users
+          for(let i = 0 ; i < this.teamsOfP.length ; i++){
+            for(let j = 0 ; j < this.teamsOfP[i].users.length ; j++){
+              this.usersOfP.push(this.teamsOfP[i].users[j]);
+            }
+          }
           this.userCreate = data.userCreate
         }
       } catch (error) {
@@ -202,6 +208,7 @@ export default{
             taskId: this.id_task,
             userId: id,
             project_id: this.id,
+            deadline: this.deadlineCard
           }
           });
         let data = res.data;
@@ -461,9 +468,9 @@ export default{
             });
           let data = res.data;
           if(data){
-            this.morePro = data.data
-            this.switchPro = this.morePro.splice(0,5)
-            this.moreProFetched = true;
+            this.switchPro = data.data
+            // this.switchPro = this.morePro.splice(0,5)
+            // this.moreProFetched = true;
           }
           } catch (error) {
               this.error(error.response.data.message)
@@ -472,6 +479,24 @@ export default{
           var nextPro = this.morePro.splice(0,5)
             nextPro.forEach(element => this.switchPro.push(element))
         }
+      },
+      async mixinGetFile(url,id){
+        try {
+          let res = await axios({
+            method: 'post',
+            url: url,
+            data: {
+              id: id
+            },
+            headers: { Authorization: 'Bearer ' + this.token}
+            });
+          let data = res.data;
+          if(data){
+            this.FileInCard = data.data
+          }
+        } catch (error) {
+          this.$toaster.error(error.response.data.message)
       }
+    }
   }
 }

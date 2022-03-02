@@ -222,7 +222,7 @@ export default {
     },
     paginate(page = 1){
       this.mixinGetAllUser(page)
-      window.console.log(window.__user__)
+      // window.console.log(window.__user__)
     },
     // showUser(){
     //   this.$store.dispatch('getAllUser');

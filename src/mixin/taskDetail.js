@@ -5,7 +5,10 @@ export default{
   data(){
     return{
       task: [],
-      RComment: ''
+      RComment: '',
+      token: localStorage.getItem('token'),
+      historyChange:[],
+      indexDeleteFile: 0
     }
   },
   methods:{
@@ -17,7 +20,8 @@ export default{
           data: {
             user: user,
             id: this.$props.taskCard.id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
@@ -27,7 +31,8 @@ export default{
           }
         }
       } catch (error) {
-        this.$toaster.error(error.response.data.message)
+        // this.$toaster.error(error.response.data.message)
+        this.$swal('Lỗi!!!', error.response.data.message, 'error')
       }
     },
     async mixindeleteUserT(url,id){
@@ -38,7 +43,8 @@ export default{
           data: {
             userId: id,
             taskId: this.$props.taskCard.id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
@@ -127,6 +133,28 @@ export default{
         this.$toaster.error(error.response.data.message)
       }
     },
+    async mixinGetAllDt(){
+      // alert(this.$props.taskCard.id)
+      try {
+        let res = await axios({
+          method: 'post',
+          url: 'api/task-detail/get-all-data',
+          data: {
+            taskDetailId: this.$props.taskCard.id,
+          }
+          });
+        let data = res.data;
+        if(data){
+          // window.console.log(data.data)
+          this.$emit('update:tagTaskDetail', data.tag);
+          this.$emit('update:FileInCard', data.file);
+          this.$emit('update:getJob', data.tag);
+          // this.$props.tagTaskDetail = data.data
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
     async mixinAddTagTask(url,tagId,index){
       try {
         let res = await axios({
@@ -135,7 +163,8 @@ export default{
           data: {
             tagId: tagId,
             taskDetailId: this.$props.taskCard.id,
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
@@ -182,15 +211,16 @@ export default{
         this.$toaster.error(error.response.data.message)
       }
     },
-    async mixinSetDeadLine(url){
+    async mixinSetDeadLine(url, deadline){
       try {
         let res = await axios({
           method: 'post',
           url: url,
           data: {
             taskDetailId: this.$props.taskCard.id,
-            deadline: this.deadline
-          }
+            deadline: deadline
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
@@ -248,7 +278,7 @@ export default{
             this.$emit('update:rOutOftime', false)
             this.$emit('update:outOftime', false)
           }else{
-            this.mixinSetDeadLine('api/task-detail/deadline/set')
+            this.mixinSetDeadLine('api/task-detail/deadline/set',this.deadlineP)
           }
         }
       } catch (error) {
@@ -263,13 +293,14 @@ export default{
           data: {
             taskDetailId: this.$props.taskCard.id,
             name: this.jobNameT
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
         this.$toaster.success(data.message)
         // this.$emit('update:getJob', data.data)
-        this.$props.getJob.push(data.data)
+        // this.$props.getJob.push(data.data)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
@@ -281,15 +312,19 @@ export default{
           method: 'post',
           url: url,
           data: {
-            id: id,
-          }
+            id: id
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
-        this.$props.getJob.splice(index,1)
+          data
+          index
+        // this.$props.getJob.splice(index,1)
         }
       } catch (error) {
-        this.$toaster.error(error.response.data.message)
+        // this.$toaster.error(error.response.data.message)
+        this.$swal('Lỗi!!!', error.response.data.message, 'error')
       }
     },
     async mixinAddJob(url,name,jobId,index){
@@ -300,12 +335,14 @@ export default{
           data: {
             name: name,
             jobId: jobId
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
         this.$toaster.success(data.message)
-        this.$props.getJob[index].job_details.push(data.data)
+        index
+        // this.$props.getJob[index].job_details.push(data.data)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
@@ -318,15 +355,18 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
         this.$toaster.success(data.message)
-        this.$props.getJob[i].job_details.splice(index,1)
+        index,i
+        // this.$props.getJob[i].job_details.splice(index,1)
         }
       } catch (error) {
-        this.$toaster.error(error.response.data.message)
+        // this.$toaster.error(error.response.data.message)
+        this.$swal('Lỗi', error.response.data.message, 'error')
       }
     },
     async mixinCheckJob(url,id,check){
@@ -337,7 +377,8 @@ export default{
           data: {
             id: id,
             check: !check
-          }
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
           });
         let data = res.data;
         if(data){
@@ -361,9 +402,9 @@ export default{
         let data = res.data;
         if(data){
         this.$toaster.success(data.message)
-        this.$props.getCommentTD.push(data.data)
+        // this.$props.getCommentTD.push(data.data)
         this.comment = ''
-        window.console.log(this.$props.getCommentTD)
+        // window.console.log(this.$props.getCommentTD)
 
         }
       } catch (error) {
@@ -382,7 +423,8 @@ export default{
         let data = res.data;
         if(data){
         this.$toaster.success(data.message)
-        this.$props.getCommentTD.splice(i,1)
+        i
+        // this.$props.getCommentTD.splice(i,1)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
@@ -418,7 +460,7 @@ export default{
           data: {
             parent_id: parent_id,
             userId: userId,
-            comment: this.RComment
+            comment: this.RComment,
           }
           });
         let data = res.data;
@@ -426,7 +468,7 @@ export default{
           data
           this.$props.getCommentTD[i].showRepply = false
           this.RComment = ''
-          this.$props.getCommentTD[i].replies.push(data.data)
+          // this.$props.getCommentTD[i].replies.push(data.data)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
@@ -443,7 +485,9 @@ export default{
           });
         let data = res.data;
         if(data){
-          this.$props.getCommentTD[i].replies.splice(index,1)
+          i
+          index
+          // this.$props.getCommentTD[i].replies.splice(index,1)
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
@@ -470,6 +514,132 @@ export default{
         }
       } catch (error) {
         this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinDeleteFile(url,id,i){
+      
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: id,
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
+          });
+        let data = res.data;
+        if(data){
+          data,i
+          // this.FileInCard.splice(i,1);
+        }
+      } catch (error) {
+        // this.$toaster.error(error.response.data.message)
+        this.$swal('Lỗi!!!', error.response.data.message, 'error')
+      }
+    },
+    async getFile(){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: 'api/file/get-all',
+          data: {
+            id: this.taskCard.id,
+          }
+          });
+        let data = res.data;
+        if(data){
+          this.FileInCard = data.data
+        }
+      } catch (error) {
+        this.$toaster.error(error.response.data.message)
+      }
+    },
+    async mixinFormSubmit(url,e){
+      url
+      e.preventDefault();
+      let data = new FormData();
+      data.append('file', this.file);
+      data.append('task_detail_id',this.taskCard.id)
+      data.append('name',this.NameFile)
+      await axios.post(url, data, 
+        {
+          headers: {
+            'content-type': 'multipart/form-data',
+            Authorization: 'Bearer ' + this.token
+        }
+      })
+      .then(res => {
+        res
+        // this.FileInCard.push(res.data.data)
+      })
+      .catch(err => {
+        // if(err.response.status == 422){
+        //   this.$toaster.error('Vui lòng nhập tên tài liệu và chọn tài liệu muốn tải lên')
+        // }
+        this.$swal('Lỗi!!!', err.response.data.message, 'error')
+      });
+    },
+    async mixinChangeFile(url,id,name,i){
+      
+      // e.preventDefault();
+      let data = new FormData();
+      data.append('file', this.file);
+      data.append('name',name);
+      data.append('id',id);
+      await axios.post(url, data, 
+        {
+          headers: {
+            'content-type': 'multipart/form-data',
+            Authorization: 'Bearer ' + this.token
+        }
+      })
+      .then(res => {
+        this.FileInCard[i] = res.data.data
+      })
+      .catch(err => {
+        if(err.response.status == 422){
+          this.$toaster.error('Vui lòng nhập tên tài liệu và chọn tài liệu muốn tải lên')
+        }
+      });
+    },
+    async mixinCompledteConfi(url){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: this.taskCard.id,
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
+          });
+        let data = res.data;
+        if(data){
+          // this.$toaster.success(data.msg)
+          this.$swal('Đã gửi yêu cầu', 'Gửi yêu cầu xác nhận thành công', 'success')
+        }
+      } catch (error) {
+          this.$swal('Lỗi',error.response.data.msg, 'error')
+        // this.$toaster.error(error.response.data.msg)
+      }
+    },
+    async mixinGetHistoryChange(url){
+      try {
+        let res = await axios({
+          method: 'post',
+          url: url,
+          data: {
+            id: this.taskCard.id
+          },
+          headers: { Authorization: 'Bearer ' + this.token},
+          });
+        let data = res.data;
+        if(data){
+          this.historyChange = data.data
+          // window.console.log(this.historyChange)
+        }
+      } catch (error) {
+        // this.$toaster.error(error.response.data.message)
+        this.$swal('Lỗi', error.response.data.message, 'error')
       }
     }
   }

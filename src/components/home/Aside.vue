@@ -47,7 +47,13 @@
           <li class="nav-item">
             <router-link class="nav-link" to="overview">              
               <i class="nav-icon fas fa-th"></i>
-              <p>Tổng Quan</p>
+              <p>Thống kê</p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/my-word">              
+              <i class="nav-icon fas fa-briefcase"></i>
+              <p>Công việc của tôi</p>
             </router-link>
           </li>
           <li class="nav-item menu-open">
@@ -91,7 +97,7 @@
               <li class="nav-item">
                 <router-link class="nav-link" to="my-project">
                   <i class="fas fa-tasks nav-icon"></i>
-                  <p>Dự án của tôi</p>
+                  <p>Dự án tham gia</p>
                 </router-link>
               </li>
             </ul>

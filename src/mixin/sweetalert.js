@@ -26,6 +26,64 @@ export default {
         }
       })
     },
+    swComplete(dispatch,url,data,i){
+      this.$swal({
+        title: 'Bạn muốn xác nhận yêu cầu này?',
+        text: 'Yêu cầu này sẽ được xác nhận',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận!',
+        cancelButtonText: 'Không!',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then((result) => {
+        if(result.value) {
+          // window.console.log(task_detail_id)
+          dispatch(url,data,i)
+          this.$swal('Xác nhận thành công', 'Đã xác nhận yêu cầu', 'success')
+        } else {
+          this.$swal('Huỷ thao tác', 'Xác nhận này vẫn được giữ lại', 'info')
+        }
+      })
+    },
+    swDetroy(dispatch,url,data,index,i){
+      this.$swal({
+        title: 'Bạn muốn huỷ yêu cầu này?',
+        text: 'Yêu cầu này sẽ bị huỷ!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Vâng tôi huỷ!',
+        cancelButtonText: 'Không!',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then((result) => {
+        if(result.value) {
+          dispatch(url,data,i)
+          this.$swal('Đã huỷ', 'Yêu cầu đã huỷ thành công', 'success')
+        } else {
+          this.$swal('Huỷ thao tác', 'Yêu cầu này vẫn được giữ lại', 'info')
+        }
+      })
+    },
+    swNoti(mixin,url,data){
+      this.$swal({
+        title: 'Bạn muốn gửi yêu cầu xác nhận chứ?',
+        text: 'Yêu cầu sẽ được gửi đến người quản lý dự án!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Gửi yêu cầu!',
+        cancelButtonText: 'Không!',
+        showCloseButton: true,
+        showLoaderOnConfirm: true
+      }).then((result) => {
+        if(result.value) {
+          mixin(url, data)
+          // this.$swal('Đã gửi yêu cầu', 'Gửi yêu cầu xác nhận thành công', 'success')
+        } else {
+          // this.$swal('Huỷ thao tác', '', 'info')
+        }
+      })
+    },
     errorNotice(mess) {
       this.$swal({
         title: mess,

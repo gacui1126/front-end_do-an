@@ -12,7 +12,8 @@ import RoleManager from './components/home/content/roles/RoleManager'
 import Permission from './components/home/content/roles/Permission'
 import ChatHome from './components/home/content/messages/ChatHome.vue'
 import Page404 from './components/Page404'
-// import message from './components/home/content/messages/message'
+import myWord from './components/home/content/myWork/myWork'
+import InfoFriend from './components/home/content/user_info/InfoFriend'
 
 export const routes = [
   { path: '/', component: Login , name: 'login'},
@@ -47,15 +48,17 @@ export const routes = [
     {
       path:'/permissions', component: Permission , name: 'permissions', props: true
     },
-    
+    {
+      path:'/my-word', component: myWord , name: 'myWord', props: true
+    },
+    {
+      path:'/info-member', component: InfoFriend , name: 'infoFriend', props: true
+    }
   ]},
   {
     path:'/chat-home', component: ChatHome , name: 'chat-home', props: true
   },
   {
     path:'/page-404', component: Page404 , name: 'page404', props: true
-  },
-  // {
-  //   path:'/chat-home', component: message , name: 'message', props: true
-  // },
+  }
 ]

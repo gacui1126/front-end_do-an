@@ -1,19 +1,17 @@
 <template>
   <div class="over-view">
-    <section class="content" style="margin-top: 20px">
+    <section class="content" style="padding-top: 20px">
       <div class="container-fluid">
-        <div class="row">
+        <div class="row" style="padding: 0 10px">
           <div class="col-12 col-sm-6 col-md-3" style="padding-right:10px">
             <div class="info-box">
               <span class="info-box-icon bg-info elevation-1"
-                ><i class="fas fa-cog"></i
-              ></span>
+                ><i class="fas fa-project-diagram"></i></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">CPU Traffic</span>
+                <span class="info-box-text">Dự án</span>
                 <span class="info-box-number">
-                  10
-                  <small>%</small>
+                  {{Projects.length}}
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -21,32 +19,7 @@
             <!-- /.info-box -->
           </div>
           <!-- /.col -->
-          <div class="col-12 col-sm-6 col-md-3" style="padding-right:10px">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-danger elevation-1"
-                ><i class="fas fa-thumbs-up"></i
-              ></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text">Likes</span>
-                <span class="info-box-number">41,410</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-md-3" style="padding-right:10px">
-            <div class="info-box mb-3">
-              <span class="info-box-icon bg-success elevation-1"
-                ><i class="fas fa-shopping-cart"></i
-              ></span>
-
-              <div class="info-box-content">
-                <span class="info-box-text">Sales</span>
-                <span class="info-box-number">760</span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
+          
           <!-- /.col -->
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
@@ -55,30 +28,69 @@
               ></span>
 
               <div class="info-box-content">
-                <span class="info-box-text">New Members</span>
-                <span class="info-box-number">2,000</span>
+                <span class="info-box-text">Thành viên</span>
+                <span class="info-box-number">{{Users.length}}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
           </div>
           <!-- /.col -->
+          <div class="col-12 col-sm-6 col-md-3" style="padding-right:10px">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1"
+                ><i class="fas fa-plug"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Thành viên online</span>
+                <span class="info-box-number">21</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3" style="padding-right:10px">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-secondary elevation-1"
+                ><i class="fas fa-briefcase"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Công việc đã nhận</span>
+                <span class="info-box-number">760</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
         </div>
+        
       </div>
     </section>
     <div class="row" style="display:flex;justify-content: center;margin:0">
       <div class="col-md-12" style="width:98%;">
         <div class="card">
           <div class="card-header" style="display:flex;justify-content:center">
-            <h5 class="card-title">Biểu đồ dự án</h5>
+            <h5 class="card-title" style="font-weight:600">Biểu đồ dự án</h5>
           </div>
           <div class="card-body">
             <div class="row">
-              <div class="col-md-8">
-                <p class="text-center">
-                  <strong>{{currentDate()}}</strong>
-                </p>
-
+              <!-- <div class="col-md-8"> -->
+                
+                <div class="startDate">
+                  <p class="text-center" style="display:flex;justify-content:center;padding-bottom: 10px;">
+                    <label style="margin-right: 5px">Chọn năm :</label>
+                  
+                  <datepicker 
+                    v-model="defaultDate"
+                    :format="DatePickerFormat"
+                    minimum-view="year"              
+                    name="datepicker"
+                    id="input-id"
+                    input-class="input-class"
+                    :class="{'stDate': bootstrapStyling }"
+                    >
+                  </datepicker>
+                  </p>
+                </div>
+                
                 <div class="chart">
                   <canvas
                     id="myChart"
@@ -86,8 +98,8 @@
                     style="height: 180px;"
                   ></canvas>
                 </div>
-              </div>
-              <div class="col-md-4">
+              <!-- </div> -->
+              <!-- <div class="col-md-4">
                 <p class="text-center">
                   <strong>Mục tiêu</strong>
                 </p>
@@ -133,10 +145,10 @@
                     ></div>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
-          <div class="card-footer">
+          <!-- <div class="card-footer">
             <div class="row">
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
@@ -175,7 +187,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -185,35 +197,62 @@
 <script>
 import Chart from "chart.js";
 import myChart from "../../../../js/myChart";
+import overview from "../../../../mixin/overview"
+import Datepicker from 'vuejs-datepicker';
 
 export default {
+  mixins:[overview],
   data() {
     return {
       myChart: myChart,
+      defaultDate: '0',
+      DatePickerFormat: 'yyyy',
+      bootstrapStyling: true,
     };
   },
   computed: {},
+  created(){
+    this.getProject()
+  },
+  components: {
+    Datepicker
+  },
   mounted() {
-    // const st = document.getElementById('project-data');
-    // new Chart(st, this.projectData);
-
-    // const tt = document.getElementById('team-data');
-    // new Chart(tt, this.teamData);
-
-    const ctx = document.getElementById("myChart").getContext("2d");
-    new Chart(ctx, this.myChart);
     this.checkLogin();
+    this.getUser();
+    this.currentDate();
+    this.chartProject();
+    // this.chart()
   },
   methods: {
+    chart(){
+      const ctx = document.getElementById("myChart").getContext("2d");
+      new Chart(ctx, this.myChart);
+    },
     checkLogin() {
       this.$store.dispatch("checkLogin");
     },
     currentDate() {
       const current = new Date();
-      const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
-      return date;
+      const year = `${current.getFullYear()}`;
+      this.defaultDate = year;
+    },
+    getProject(){
+      this.mixinGetProject('api/overview/get/data/project');
+    },
+    getUser(){
+      this.mixinGetUser('api/overview/get/data/user');
+    },
+    chartProject(){
+      this.mixinChartProject('api/overview/chart-project-data')
     }
   },
+  watch:{
+    defaultDate: function(){
+      this.mixinChartProject('api/overview/chart-project-data')
+      // this.chart()
+    }
+  }
 };
 </script>
 
@@ -247,4 +286,24 @@ export default {
   justify-content: space-around;
   
 }
+
+.br-test{
+  height: 100px;
+  width: 100px;
+  background: sienna;
+}
+
+.vdp-datepicker * {
+  box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
+  width: 53px;
+}
+
+.startDate >>> input {
+  text-align: center;
+  cursor: pointer;
+  width: 60px;
+}
+
 </style>

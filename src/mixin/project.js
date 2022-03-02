@@ -20,7 +20,7 @@ export default{
       isUpdate: false,
       isDelete: false,
       data:{},
-      total: 6,
+      total: 10,
       pageInfo: null,
       modalCreateProject: false,
       modalEditProject: false,
@@ -51,7 +51,9 @@ export default{
           // this.deadline = data.dayDeadline;
           for(let i=0; i<this.data.data.length; i++){
             this.data.data[i].start_at = moment(String(response.data.data.data[i].start_at)).format('DD-MM-YYYY hh:mm:ss') 
-            this.data.data[i].end_at = moment(String(response.data.data.data[i].end_at)).format('DD-MM-YYYY hh:mm:ss') 
+            this.data.data[i].end_at = moment(String(response.data.data.data[i].end_at)).format('DD-MM-YYYY hh:mm:ss')
+            // this.data.data[i].countTaskDetail = this.data.data[i].task_details.length;
+            // window.console.log(this.data.data)
           }
         })
       .catch(err =>{

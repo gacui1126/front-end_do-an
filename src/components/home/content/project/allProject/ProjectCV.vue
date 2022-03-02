@@ -11,6 +11,8 @@
       :checkDateTD.sync="checkDateTD"
       :getJob.sync="getJob"
       :getCommentTD.sync="getCommentTD"
+      :FileInCard.sync="FileInCard"
+      :taskCardId.sync="taskCardId"
     />
     <!-- EDIT TASK -->
     <Modal
@@ -59,13 +61,13 @@
                 Chuyển dự án
                 <Icon type="ios-arrow-down"></Icon>
                 </Button>
-                <div slot="content">
+                <div slot="content" style="height: 400px">
                   <div @click="projectGO(project.id)" class="pro" v-for="(project,i) in this.switchPro" :key="i">
                     {{project.name}}
                   </div>
-                  <Button @click="switchProject()">Xem thêm
+                  <!-- <Button @click="switchProject()">Xem thêm
                     <Icon type="ios-arrow-down"></Icon>
-                  </Button>
+                  </Button> -->
                 </div>
             </Poptip>
           </li>
@@ -136,6 +138,14 @@
                     </DropdownItem>
                     <div class="dropdown-divider"></div>
                     <div class="sp" style="text-align:center; background: #dee2e6">
+                      <span class="" >Người quản lí dự án</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="manager-project">
+                      {{userCreate.name}}
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="sp" style="text-align:center; background: #dee2e6">
                       <span class="" >Thành viên trong dự án</span>
                     </div>
                      <div class="dropdown-divider"></div>
@@ -173,6 +183,11 @@
               title="Tạo thẻ"
               width="350">
               <Input v-model="cardName" name="name" placeholder="Tên thẻ ..."/>
+              <label style="margin-top:10px;margin-bottom: 0">Deadline</label>
+              <VueCtkDateTimePicker
+                v-model="deadlineCard"
+                format="DD-MM-YYYY hh:mm a"
+              />
               <div slot="footer">
                 <Button @click="createCard(auth.user.id)" type="primary">Tạo</Button>
                 <Button @click="createTaskList = false" type="error">Huỷ</Button>
@@ -289,6 +304,9 @@ export default {
       inputs: [],
       tagTaskDetail:[],
       dayDeadline: 0,
+      deadlineCard: '',
+      getJob:[],
+      taskCardId: 0,
     }
   },  
   computed:{
@@ -307,6 +325,7 @@ export default {
   },
   created(){
     // this.taskParameter()
+    
   },
   methods:{
     checkLogin(){
@@ -315,10 +334,14 @@ export default {
     checkCom(taskCard){
       if(taskCard.completed == 1){
         return 'task-completed'
-      }if(this.outOftime == true){
-        return 'task-end'
-      }if(this.rOutOftime == true){
+      }
+      if(taskCard.diff < 2880 && taskCard.diff > 0){
         return 'task-time-out'
+      }
+      if(taskCard.diff > 2880){
+        return 0
+      }else{
+        return 'task-end'
       }
     },
     log: function(evt) {
@@ -387,6 +410,9 @@ export default {
       this.mixinCompletedTaskDetail('api/task-detail/completed/get',taskCard.id)
       this.mixinGetJob('api/job/get',taskCard.id)
       this.mixinGetComment('api/comment/get',taskCard.id)
+      this.mixinGetFile('api/file/get-file',taskCard.id)
+      window.sessionStorage.setItem('taskDetail', taskCard.id)
+      this.taskCardId = taskCard.id
     },
     switchProject(){
       this.mixinSwitchProject('api/project/switch-pro')
@@ -395,6 +421,90 @@ export default {
       window.sessionStorage.setItem('idProjectCV', id)
       window.location.reload();
       // this.$router.push({ name: 'projectCV'});
+    },
+    connectChannelCard(){
+      window.Echo.private(`taskdetail.${this.taskCardId}`)
+      .listen('TagEvent', (e)=>{
+        for(let i =0; i < this.tagTaskDetail.length; i++){
+          if(this.tagTaskDetail[i].id == e.tag.id){
+            return this.tagTaskDetail.splice(i,1)
+          }
+        }
+        this.tagTaskDetail.push(e.tag)
+      })
+      .listen('jobEvent', (e)=>{
+        if(e.event == 'createJob'){
+          return this.getJob.push(e.job)
+        }
+        if(e.event == 'deleteJob'){
+          for(let i = 0; i < this.getJob.length ; i++){
+            this.getJob.splice(i,1)
+          }
+        }
+      })
+      .listen('JobListEvent', (e)=>{
+        if(e.event == 'createJobDetail'){
+          for(let i = 0; i < this.getJob.length ; i++){
+            if(this.getJob[i].id == e.jobDetail.job_id){
+              return this.getJob[i].job_details.push(e.jobDetail)
+            }
+          }
+        }
+        if(e.event =='deleteJobDetail'){
+          for(let i = 0; i < this.getJob.length ; i++){
+            for(let j = 0; j < this.getJob[i].job_details.length; j++){
+              if(this.getJob[i].job_details[j].id == e.jobDetail.id){
+                return this.getJob[i].job_details.splice(j,1)
+              }
+              // window.console.log(this.getJob[j].job_details)
+            }
+          }
+        }
+      })
+      .listen('FileEvent', (e)=>{
+        for(let i = 0; i < this.FileInCard.length ; i++){
+          if(this.FileInCard[i].id == e.file.id){
+            return this.FileInCard.splice(i,1);
+          }
+        }
+        this.FileInCard.push(e.file)
+      })
+      .listen('commentEvent', (e)=>{
+        // window.console.log(e)
+        for(let i = 0; i < this.getCommentTD.length ; i++){
+          if(this.getCommentTD[i].id == e.comment.id){
+            // return this.getCommentTD.splice(i,1);
+            if(this.getCommentTD[i].content == e.comment.content){
+              return this.getCommentTD.splice(i,1);
+            }else{
+              return this.getCommentTD[i].content = e.comment.content
+            }
+          }
+        }
+        this.getCommentTD.push(e.comment)
+      })
+      .listen('ReplyCommentEvent', (e)=>{
+        if(e.event == 'replyComment'){
+          for(let i = 0; i < this.getCommentTD.length ; i++){
+            if(this.getCommentTD[i].id == e.comment.parent_id){
+              return this.getCommentTD[i].replies.push(e.comment)
+            }
+          }
+        }
+        if(e.event == 'deleteComment'){
+          for(let i = 0; i < this.getCommentTD.length ; i++){
+            for(let j = 0; j < this.getCommentTD[i].replies.length ; j++){
+              if(this.getCommentTD[i].replies[j].id == e.comment.id){
+                return this.getCommentTD[i].replies.splice(j,1)
+                // window.console.log(this.getCommentTD)
+              }
+            }
+          }
+        }
+      })
+    },
+    disconnectChannelCard(cardId){
+      window.Echo.leave(`taskdetail.${cardId}`)
     }
   },
   watch: {
@@ -412,6 +522,12 @@ export default {
     },
     usersOfP: function(){
       this.getTask()
+    },
+    taskCardId(val,oldVal){
+      if(oldVal){
+        this.disconnectChannelCard(oldVal)
+      }
+      this.connectChannelCard()
     }
   },
 }

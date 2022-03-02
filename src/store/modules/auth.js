@@ -8,7 +8,9 @@ const state = {
   },
   editUser: {},
   updateUser: '',
-  errorResetPass: {}
+  errorResetPass: {},
+  token: localStorage.getItem('token'),
+  myProject: [],
 }
 const getters = {
   user: state => state.user,
@@ -146,6 +148,20 @@ const actions = {
         </div>`
       }
     }
+  },
+  async getMyProject({commit}){
+    try {
+      let res = await axios({
+        method: 'post',
+        url: 'api/project/get/my-project',
+        headers: { Authorization: 'Bearer ' + state.token},
+      });
+      let data = res.data;
+      let pro = data.data.reverse()
+      commit('myProject',pro);
+    } catch (error) {
+      error 
+    }
   }
 }
 const mutations = {
@@ -176,9 +192,10 @@ const mutations = {
   },
   errorResetPass(state,data){
     state.errorResetPass = data
+  },
+  myProject(state,data){
+    state.myProject = data
   }
-
-  
 }
 
 export default {

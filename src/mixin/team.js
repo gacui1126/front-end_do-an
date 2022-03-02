@@ -5,10 +5,21 @@ import axios from 'axios';
 export default{
   data(){
     return{
-      token: localStorage.getItem('token')
+      token: localStorage.getItem('token'),
+      allUser: []
     }
   },
   methods:{
+    async mixinGetAllUser(url){
+      await axios.get(url,{headers: { Authorization: 'Bearer ' + this.token}})
+      .then(response =>
+        { 
+          this.allUser = response.data.data
+        })
+      .catch(err =>{
+        err
+      })
+    },
     async mixinGetAllTeam(page){
       await axios.get(`/api/team/show?page=${page}&total=${this.total}`,{headers: { Authorization: 'Bearer ' + this.token}})
       .then(response =>
@@ -30,6 +41,7 @@ export default{
           url: url,
           data: {
             name: team.name,
+            users: this.user
           },
           headers: { Authorization: 'Bearer ' + this.token}
         });

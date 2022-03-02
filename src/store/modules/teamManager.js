@@ -113,7 +113,8 @@ const actions = {
         url: 'api/team/teamuser',
         data: {
           id: id
-        }
+        },
+        headers: { Authorization: 'Bearer ' + state.token}
       });
       let data = res.data;
       commit('teamUser',data.data);

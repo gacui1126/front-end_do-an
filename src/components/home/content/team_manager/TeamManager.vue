@@ -22,8 +22,24 @@
           <div class="modal-body">
             <form class="row form-group" >
               <div class="col">
+                    <label for="">Tên nhóm</label>
                     <input type="text" name="email" v-model="team.name" class="form-control" placeholder="Nhập tên team ..." :class="{'is-invalid' : teamManager.message}"/>
                     <div v-if="teamManager.message" class="invalid-feedback">{{teamManager.message}}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="">Chọn thành viên</label>
+                    <multiselect 
+                      v-model="user" 
+                      :options="allUser" 
+                      :multiple="true" 
+                      :close-on-select="false" 
+                      :clear-on-select="false" 
+                      :preserve-search="true" 
+                      placeholder="Chọn thành viên" 
+                      label="name"
+                      track-by="id" 
+                      :preselect-first="true">
+                    </multiselect>
                   </div>
                   <div class="btn_team">
                     <button @click.prevent="createTeam()" data-dismiss="modal" type="submit" class="btn btn-success">Tạo</button>
@@ -123,7 +139,8 @@ export default {
       changeTeam: '',
       idUser: '',
       total: 5,
-      pageInfo: null
+      pageInfo: null,
+      user:[]
     }
   },
   computed:{
@@ -133,8 +150,12 @@ export default {
   created(){
     this.showTeam()
     this.getAllTeam()
+    this.getAllUser()
   },
   methods:{
+    getAllUser(){
+      this.mixinGetAllUser('api/user/all');
+    },
     showTeam(page = 1){
       // this.$store.dispatch('getTeam', page);
       this.mixinGetAllTeam(page)
