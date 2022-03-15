@@ -1,7 +1,7 @@
 module.exports = {
-  devServer: {
-    host: 'localhost'
-  },
+  // devServer: {
+  //   host: 'localhost'
+  // },
   // publicPath: '/front-end_do-an/'
 
 };
