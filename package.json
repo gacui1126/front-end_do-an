@@ -13,6 +13,7 @@
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
     "emoji-mart-vue": "^2.6.6",
+    "express": "^4.17.3",
     "jquery": "^3.6.0",
     "laravel-echo": "^1.11.3",
     "luxon": "^1.28.0",
@@ -20,6 +21,7 @@
     "popper.js": "^1.16.1",
     "pusher-js": "^7.0.3",
     "pusher-js-auth": "^4.0.1",
+    "serve-static": "^1.14.2",
     "socket.io-client": "^4.4.1",
     "v-calendar": "^2.3.4",
     "view-design": "^4.7.0",
@@ -76,5 +78,7 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "postinstall": "npm run build",
+  "start": "node server.js"
 }
