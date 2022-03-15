@@ -50,13 +50,15 @@ export default{
 </script>
 
 <style lang="css" scoped>
+  
   .row{
     width: 400px;
     padding: 50px 0;
     border: 1px solid #000;
     border-radius: 10px;
-    margin: 50px auto;
+    margin: 160px auto;
     box-shadow: 10px 10px 8px #888888;
+    background: rgba(241, 252, 233, 0.822);
   }
 
   .form-group label{

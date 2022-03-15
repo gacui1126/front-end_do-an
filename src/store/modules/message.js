@@ -1,6 +1,8 @@
 import axios from 'axios'
 import moment from 'moment'
 import sweetalert from '../../mixin/sweetalert'
+import Vue from 'vue';
+// import router from './router'
 
 
 const state = {
@@ -65,6 +67,25 @@ const actions = {
           state.notications.unshift(e.notication);
           state.countUnReadNoti++;
             // window.console.log(e)
+        })
+        .listen('SendRQCompleteCardEvent', (e)=>{
+          e
+          Vue.swal({
+            title: 'bạn có yêu cầu xác nhận thẻ!!!',
+            text: 'Vui lòng vào trang công việc để xử lý',
+            type: 'warning',
+            showCancelButton: true,
+            // confirmButtonText: 'Đến trang!',
+            cancelButtonText: 'Đóng!',
+            showCloseButton: true,
+            showLoaderOnConfirm: true
+          }).then((result) => {
+            if(result.value) {
+              // window.location.replace('/my-work')
+            } else {
+              // this.$swal('Huỷ thao tác', 'Xác nhận này vẫn được giữ lại', 'info')
+            }
+          })
         })
     })
   },

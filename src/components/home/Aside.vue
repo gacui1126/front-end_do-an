@@ -51,12 +51,12 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/my-word">              
+            <router-link class="nav-link" to="/my-work">              
               <i class="nav-icon fas fa-briefcase"></i>
               <p>Công việc của tôi</p>
             </router-link>
           </li>
-          <li class="nav-item menu-open">
+          <li v-if="checkShow(myWork.RoleForMe)" class="nav-item menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
@@ -88,7 +88,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
+              <li v-if="checkShow(myWork.RoleForMe)" class="nav-item">
                 <router-link class="nav-link" to="all-project">
                   <i class="fas fa-project-diagram nav-icon"></i>
                   <p>Tất cả dự án</p>
@@ -102,7 +102,7 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item menu-open">
+          <li v-if="checkShow(myWork.RoleForMe)" class="nav-item menu-open">
             <a href="#" class="nav-link active br-y">
               <i class="fas fa-cogs nav-icon"></i>
               <p>
@@ -117,7 +117,7 @@
                   <p>Vai trò</p>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li v-if="checkShow(myWork.RoleForMe)" class="nav-item">
                 <router-link class="nav-link" to="permissions">
                   <i class="fas fa-tasks nav-icon"></i>
                   <p>Phân quyền</p>
@@ -145,17 +145,25 @@ export default {
     return{
     }
   },
-  // created(){
-  //   this.checkPer()
-  // },
+  created(){
+    this.checkRole()
+  },
   methods:{
-    // checkPer(per){
-    //   this.mixinCheckPer(per)
-    // },
+    checkRole(){
+      this.$store.dispatch('checkRole')
+    },
+    checkShow(role){
+      for(let i = 0; i < role.length; i++){
+        if(role[i] == 'Admin' || role[i] == 'manager'){
+          return true
+        }
+      }
+      return false
+    },
   },
   
   computed:{
-    ...mapState(['auth'])
+    ...mapState(['auth','myWork'])
   }
 }
 </script>

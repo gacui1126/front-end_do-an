@@ -58,8 +58,8 @@
                     </span>
                     <p class="text-sm">{{mess.message_re[mess.message_re.length - 1].message}}</p>
                     <p class="text-sm text-muted">
-                      <i class="fa fa-circle" :class="`${onlineUser.find(online=>online.id === mess.id)  ? 'online' : 'offline'}`"></i>
-                        {{onlineUser.find(online=>online.id === mess.id)  ? 'Online' : 'Offline'}}
+                      <i class="fa fa-circle" :class="`${channel.onlineUser.find(online=>online.id === mess.id)  ? 'online' : 'offline'}`"></i>
+                        {{channel.onlineUser.find(online=>online.id === mess.id)  ? 'Online' : 'Offline'}}
                     </p>
                   </div>
                 </div>
@@ -132,11 +132,11 @@ export default {
       // messages:[],
       token: localStorage.getItem('token'),
       selected: 0,
-      onlineUser: []
+      // onlineUser: []
     }
   },
   computed: {
-    ...mapState(['auth','message']),
+    ...mapState(['auth','message','channel']),
     sortedMess(){
       return _.sortBy(this.$store.state.message.messages,[(user)=>{
           if(user == this.selected){
@@ -150,23 +150,15 @@ export default {
     this.checkLogin();
     this.getMess();
     this.getNoti();
-
-    window.Echo.join(`joinChat`)
-    .here((users) => {
-        this.onlineUser = users;
-    })
-    .joining((user) => {
-        this.onlineUser.push(user);
-    })
-    .leaving((user) => {
-        this.onlineUser.splice(this.onlineUser.indexOf(user),1)
-    })
-    .error((error) => {
-        window.console.error(error);
-    });
+    this.connect();
+    this.taskForMe();
   },
   methods:{
     ...mapActions(['logout']),
+
+    connect(){
+      this.$store.dispatch('connect')
+    },
     checkLogin(){
       this.$store.dispatch('checkLogin')
     },
@@ -181,6 +173,9 @@ export default {
     },
     selectNoti(){
       this.$store.dispatch('selectNoti')
+    },
+    taskForMe(){
+      this.$store.dispatch('taskForMe');
     }
   },
 }

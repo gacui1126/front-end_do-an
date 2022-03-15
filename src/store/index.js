@@ -7,6 +7,7 @@ import teamManager from './modules/teamManager';
 import project from './modules/project';
 import message from './modules/message';
 import myWork from './modules/myWork';
+import channel from './modules/channel'
 
 // Load Vuex
 Vue.use(Vuex);
@@ -20,5 +21,6 @@ export default new Vuex.Store({
     project,
     message,
     myWork,
+    channel
   },
 });

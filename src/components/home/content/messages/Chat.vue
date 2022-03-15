@@ -34,9 +34,9 @@
                                     <p class="name">{{user.name}}</p>
                                     <div class="status">
                                         <i class="fa fa-circle" 
-                                        :class="`${onlineUser.find(online=>online.id === user.id)  ? 'online' : 'offline'}`">
+                                        :class="`${channel.onlineUser.find(online=>online.id === user.id)  ? 'online' : 'offline'}`">
                                         </i>
-                                            {{onlineUser.find(online=>online.id === user.id)  ? 'Online' : 'Offline'}} 
+                                            {{channel.onlineUser.find(online=>online.id === user.id)  ? 'Online' : 'Offline'}} 
                                     </div>                                
                               </div>
                               <span class="unread" v-if="user.unread">{{user.unread > 5 ? '5+' : user.unread}}</span>
@@ -132,7 +132,7 @@ data(){
     }
 },
 computed:{
-    ...mapState(['auth']),
+    ...mapState(['auth','channel']),
     filteredList() {
         return this.sortedUser.filter(users => {
             return users.name.toLowerCase().includes(this.search.toLowerCase())

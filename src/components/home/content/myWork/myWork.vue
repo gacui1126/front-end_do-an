@@ -81,7 +81,7 @@
         <div class="my-task-header">
           <h3>Yêu cầu xác nhận</h3>
         </div>
-        <div style="display: flex; justify-content: center;margin-bottom: 50px">
+        <div style="display: flex; justify-content: center;padding-bottom: 50px">
           <table class="table-scroll small-first-col" style="width:98%;border-radius:10px">
             <thead style="border-radius:10px">
               <tr>
@@ -141,9 +141,9 @@ export default {
     
   },
   methods:{
-    taskForMe(){
-      this.$store.dispatch('taskForMe');
-    },
+    // taskForMe(){
+    //   this.$store.dispatch('taskForMe');
+    // },
     goProject(id){
       window.sessionStorage.setItem('idProjectCV', id)
       this.$router.push({ name: 'projectCV'});
@@ -159,9 +159,9 @@ export default {
       this.swComplete(this.$store.dispatch,'confirmCom',id,i);
       // this.$store.dispatch('confirmCom',id,i);
     },
-    checkRole(){
-      this.$store.dispatch('checkRole')
-    },
+    // checkRole(){
+    //   this.$store.dispatch('checkRole')
+    // },
     checkShow(role){
       for(let i = 0; i < role.length; i++){
         if(role[i] == 'Admin' || role[i] == 'manager'){
@@ -178,9 +178,9 @@ export default {
     }
   },
   created(){
-    this.taskForMe()
+    // this.taskForMe()
     this.requestComplete()
-    this.checkRole()
+    // this.checkRole()
   }
 }
 </script>

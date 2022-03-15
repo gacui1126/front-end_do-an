@@ -69,6 +69,7 @@ export default{
           this.myChart.data.datasets[0].data = result
           this.myChart.data.datasets[1].data = count
           this.chart()
+          this.loaded = false
         }
       } catch (error) {
           this.error(error.response.data)

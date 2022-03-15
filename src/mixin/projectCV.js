@@ -149,7 +149,8 @@ export default{
             project_id: this.id,
             user_id: id,
             name: this.taskName
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -158,7 +159,9 @@ export default{
           this.addTask = false
         }
       } catch (error) {
-        this.error(error)
+        // this.error(error.message)
+        this.addTask = false
+        this.$swal('Lỗi', error.response.data.message, 'error')
       }
     },
     async mixinGetTask(url,id){
@@ -168,7 +171,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -209,7 +213,8 @@ export default{
             userId: id,
             project_id: this.id,
             deadline: this.deadlineCard
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -230,7 +235,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -250,7 +256,8 @@ export default{
           data: {
             id: id,
             name: this.editT.name
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -271,7 +278,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -290,7 +298,8 @@ export default{
           url: url,
           data: {
             id: id
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -309,7 +318,8 @@ export default{
           url: url,
           data: {
             team: this.teamsOfP
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -336,7 +346,8 @@ export default{
           url: url,
           data: {
             taskDetailId: taskDetailId,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -353,7 +364,8 @@ export default{
           url: url,
           data: {
             taskDetailId: taskDetailId,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -380,7 +392,8 @@ export default{
           url: url,
           data: {
             taskDetailId: taskDetailId,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -404,7 +417,8 @@ export default{
           url: url,
           data: {
             taskDetailId: taskDetailId,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -430,7 +444,8 @@ export default{
           url: url,
           data: {
             id: id,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){
@@ -448,7 +463,8 @@ export default{
           url: url,
           data: {
             id: id,
-          }
+          },
+          headers:{Authorization: 'Bearer ' + this.token}
           });
         let data = res.data;
         if(data){

@@ -402,6 +402,7 @@ export default {
       this.swdelete(this.mixinDeleteTaskD, "api/task-detail/delete", id);
     },
     taskDetail(taskCard,tags){
+      
       this.mixinGetUserOfTeam('api/task-detail/get/user-of-team')
       this.mixinGetUserTaskDetail('api/task-detail/get/user', taskCard.id)
       // this.mixinTagTaskDetail('api/tag/get-tag-taskdetail',taskCard.id)
@@ -459,6 +460,17 @@ export default {
               // window.console.log(this.getJob[j].job_details)
             }
           }
+        }
+        if(e.event =='checkJobD'){
+          for(let i = 0; i < this.getJob.length ; i++){
+            for(let j = 0; j < this.getJob[i].job_details.length; j++){
+              if(this.getJob[i].job_details[j].id == e.jobDetail.id){
+                return this.getJob[i].job_details[j].check = !this.getJob[i].job_details[j].check
+              }
+            }
+            // window.console.log(this.getJob[j].job_details)
+          }
+          // window.console.log(this.getJob)
         }
       })
       .listen('FileEvent', (e)=>{

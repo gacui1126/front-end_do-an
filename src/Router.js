@@ -12,7 +12,7 @@ import RoleManager from './components/home/content/roles/RoleManager'
 import Permission from './components/home/content/roles/Permission'
 import ChatHome from './components/home/content/messages/ChatHome.vue'
 import Page404 from './components/Page404'
-import myWord from './components/home/content/myWork/myWork'
+import myWork from './components/home/content/myWork/myWork'
 import InfoFriend from './components/home/content/user_info/InfoFriend'
 
 export const routes = [
@@ -49,7 +49,7 @@ export const routes = [
       path:'/permissions', component: Permission , name: 'permissions', props: true
     },
     {
-      path:'/my-word', component: myWord , name: 'myWord', props: true
+      path:'/my-work', component: myWork , name: 'myWork', props: true
     },
     {
       path:'/info-member', component: InfoFriend , name: 'infoFriend', props: true

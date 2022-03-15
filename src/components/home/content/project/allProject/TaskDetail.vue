@@ -225,7 +225,7 @@
                   <div class="job">
                     <div class="job-list" v-for="(job, index) in j.job_details" :key="index">
                       <div class="job-list-left" style="display: flex;">
-                        <div @click="checkJob(job.id,job.check)" class="check-job">
+                        <div @click.prevent="checkJob(job.id,job.check)" class="check-job">
                           <Checkbox v-model="job.check"></Checkbox>
                         </div>
                         <span :class="{'text-line' : job.check}">{{ job.name }}</span>
