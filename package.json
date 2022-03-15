@@ -5,7 +5,8 @@
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "postinstall": "npm run prod"
   },
   "dependencies": {
     "axios": "^0.24.0",
@@ -78,7 +79,5 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ],
-  "heroku-postinstall": "npm install && npm run build",
-  "start": "node server.js"
+  ]
 }
