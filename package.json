@@ -79,6 +79,6 @@
     "last 2 versions",
     "not dead"
   ],
-  "postinstall": "npm run build",
+  "heroku-postinstall": "npm install && npm run build",
   "start": "node server.js"
 }
