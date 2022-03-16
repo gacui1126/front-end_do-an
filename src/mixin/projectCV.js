@@ -212,7 +212,8 @@ export default{
             taskId: this.id_task,
             userId: id,
             project_id: this.id,
-            deadline: this.deadlineCard
+            deadline: this.deadlineCard,
+            user: this.userSe
           },
           headers:{Authorization: 'Bearer ' + this.token}
           });

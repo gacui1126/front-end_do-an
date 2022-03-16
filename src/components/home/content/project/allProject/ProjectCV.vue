@@ -188,6 +188,20 @@
                 v-model="deadlineCard"
                 format="DD-MM-YYYY hh:mm a"
               />
+              <label style="margin-top:10px;margin-bottom: 0">Phân công</label>
+              <multiselect 
+                class="mul-se"
+                v-model="userSe" 
+                :options="usersOfP" 
+                :multiple="true" 
+                :close-on-select="false" 
+                :clear-on-select="false" 
+                :preserve-search="true" 
+                placeholder="Thêm thành viên" 
+                label="email"
+                track-by="id" 
+                :preselect-first="true">
+              </multiselect>
               <div slot="footer">
                 <Button @click="createCard(auth.user.id)" type="primary">Tạo</Button>
                 <Button @click="createTaskList = false" type="error">Huỷ</Button>
@@ -307,6 +321,7 @@ export default {
       deadlineCard: '',
       getJob:[],
       taskCardId: 0,
+      userSe: [],
     }
   },  
   computed:{
