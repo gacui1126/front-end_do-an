@@ -379,7 +379,7 @@ export default {
       if(taskComplete == 0){
         return 0
       }else{
-        return per*100
+        return parseFloat(per*100).toFixed(0)
       }
     },
     checkLogin(){

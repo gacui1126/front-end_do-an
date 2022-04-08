@@ -50,7 +50,6 @@
             <th>Thẻ</th>
             <th>Dự án</th>
             <th>Deadline</th>
-            <!-- <th>Thời hạn</th> -->
             <th>Hành động</th>
             </tr>
           </thead>
@@ -64,11 +63,6 @@
                 </span>
               </td>
               <td>{{card.deadline ? card.deadline : 'Chưa có deadline'}}</td>
-              <!-- <td>
-                <span :class="card.remainingTime ? 'deadlineTaskGreen' : 'deadlineTaskRed'">
-                  {{card.remainingTime ? card.remainingTime + ' Ngày' : 'Hết hạn'}}
-                </span>
-              </td> -->
               <td>
                 <Button @click="goProject(card.projects.id)" type="primary">Nhấn để vào dự án</Button>
               </td>
@@ -169,6 +163,9 @@ export default {
         }
       }
       return false
+    },
+    taskForMe(){
+      this.$store.dispatch('taskForMe');
     }
     
   },
@@ -178,7 +175,7 @@ export default {
     }
   },
   created(){
-    // this.taskForMe()
+    this.taskForMe()
     this.requestComplete()
     // this.checkRole()
   }

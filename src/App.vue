@@ -23,8 +23,8 @@ export default {
   }
   body{
     background-image: url(https://tudienvietnam.com/wp-content/uploads/2022/01/auE86wLD1-chon-khung-thoi-gian-giao-dich-forex-theo-chien-luoc-giao-dich-1.jpg);
-    background-repeat: no-repeat;
-    background-size: auto;
+    /* background-repeat: no-repeat;
+    background-size: auto; */
   }
   
 

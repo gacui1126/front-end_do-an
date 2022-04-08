@@ -471,7 +471,7 @@
               <div class="content-right ml-2">
                 <span class="content-right-header">Thêm vào thẻ</span>
                 <div class="bt-clear">
-                  <Poptip class="button-link" width="500" placement="bottom">
+                  <Poptip v-if="checkShow(myWork.RoleForMe)" class="button-link" width="500" placement="bottom">
                     <a>
                       <i class="far fa-user icon"></i>
                       <span>Thành viên</span>
@@ -586,7 +586,7 @@
                     </div>
                   </Poptip>
 
-                  <div class="date-p">
+                  <div class="date-p" v-if="checkShow(myWork.RoleForMe)">
                     <div @click.prevent="modalDate =! modalDate" class="button-link">
                       <a>
                         <i class="far fa-clock icon"></i>
@@ -763,7 +763,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["project","auth"]),
+    ...mapState(["project","auth","myWork"]),
   },
   
   created() {
@@ -778,7 +778,14 @@ export default {
     }
   },
   methods: {
-    
+    checkShow(role){
+      for(let i = 0; i < role.length; i++){
+        if(role[i] == 'Admin' || role[i] == 'manager'){
+          return true
+        }
+      }
+      return false
+    },
     getAllDt(){
       this.mixinGetAllDt()
     },

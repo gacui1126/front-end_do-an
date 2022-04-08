@@ -88,7 +88,7 @@
             </strong>
           </div>
           <div style="max-height: 500px;overflow-x: hidden; overflow-y: scroll">
-            <router-link to="/my-word">
+            <router-link to="/my-work">
               <div 
                 
                 :style="`${noti.read == 0 ? 'background: #efefef;' : ''}`"

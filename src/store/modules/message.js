@@ -2,8 +2,7 @@ import axios from 'axios'
 import moment from 'moment'
 import sweetalert from '../../mixin/sweetalert'
 import Vue from 'vue';
-// import router from './router'
-
+import {routes} from '../../Router';
 
 const state = {
   data: [],
@@ -75,13 +74,13 @@ const actions = {
             text: 'Vui lòng vào trang công việc để xử lý',
             type: 'warning',
             showCancelButton: true,
-            // confirmButtonText: 'Đến trang!',
+            confirmButtonText: 'Đến trang!',
             cancelButtonText: 'Đóng!',
             showCloseButton: true,
-            showLoaderOnConfirm: true
+            // showLoaderOnConfirm: true
           }).then((result) => {
             if(result.value) {
-              // window.location.replace('/my-work')
+              routes.push({path:'/my-work'})
             } else {
               // this.$swal('Huỷ thao tác', 'Xác nhận này vẫn được giữ lại', 'info')
             }

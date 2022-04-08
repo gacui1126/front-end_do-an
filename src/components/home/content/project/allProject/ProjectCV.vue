@@ -162,13 +162,13 @@
           <li class="nav-item">
             <Button
              @click="addTask = true" type="warning" class="nav-link ml-1" style="color: #fff">
-              thêm task
+              thêm giai đoạn
             </Button>
 
             <!-- ADD TASK -->
             <Modal
               v-model="addTask"
-              title="Tạo task"
+              title="Tạo giai đoạn"
               width="300">
               <Input v-model=taskName placeholder="Tên task ..."/>
               <div slot="footer">
